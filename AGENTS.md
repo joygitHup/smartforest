@@ -19,10 +19,19 @@
 │   └── start.sh            # 生产环境启动脚本
 ├── src/
 │   ├── app/                # 页面路由与布局
-│   ├── components/ui/      # Shadcn UI 组件库
+│   │   ├── devices/        # 设备管理页面
+│   │   ├── alerts/         # 告警管理页面
+│   │   ├── fire-tracing/   # 火情溯源与蔓延推演
+│   │   ├── reports/        # 报表中心
+│   │   ├── settings/       # 系统设置
+│   │   └── diagnostics/    # 运维诊断
+│   ├── components/
+│   │   ├── ui/             # Shadcn UI 组件库
+│   │   └── layout/         # 布局组件（侧边栏、顶部导航）
 │   ├── hooks/              # 自定义 Hooks
 │   ├── lib/                # 工具库
-│   │   └── utils.ts        # 通用工具函数 (cn)
+│   │   ├── utils.ts        # 通用工具函数 (cn)
+│   │   └── mock-data.ts    # 模拟数据
 │   └── server.ts           # 自定义服务端入口
 ├── next.config.ts          # Next.js 配置
 ├── package.json            # 项目依赖管理
@@ -63,3 +72,20 @@
 
 - 模板默认预装核心组件库 `shadcn/ui`，位于`src/components/ui/`目录下
 - Next.js 项目**必须默认**采用 shadcn/ui 组件、风格和规范，**除非用户指定用其他的组件和规范。**
+
+## 物联网监控平台规范
+
+### 设计风格
+- 深色主题：背景 #0a1628，面板 #152238，边框 #1e3a5f
+- 强调色：信息蓝 #3b82f6，成功绿 #10b981，警告橙 #f59e0b，危险红 #ef4444
+- 等宽字体用于数据展示
+- 微光效果用于强调元素
+
+### 统一翻页组件
+- 全局使用 `src/components/ui/pagination.tsx`
+- 深色主题适配，支持紧凑模式
+- 所有列表页面统一使用此组件
+
+### 页面结构
+- 侧边栏导航 + 顶部状态栏 + 主内容区
+- 响应式布局，适配大屏和桌面端
