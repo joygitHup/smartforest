@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'django'
+    static_configs:
+      - targets: ['backend:8000']
+    metrics_path: '/metrics'
+
+  - job_name: 'celery'
+    static_configs:
+      - targets: ['celery_worker:8000']
+    metrics_path: '/metrics'
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+
+  - job_name: 'emqx'
+    static_configs:
+      - targets: ['emqx:18083']
+
+  - job_name: 'tdengine'
+    static_configs:
+      - targets: ['tdengine:6046']

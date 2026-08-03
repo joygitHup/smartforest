@@ -1,0 +1,268 @@
+version: '3.8'
+
+services:
+  # Django 后端
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: forest_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=forest_monitor
+      - DATABASE_USER=forest_user
+      - DATABASE_PASSWORD=forest_pass
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - MQTT_BROKER_HOST=emqx
+      - MQTT_BROKER_PORT=1883
+      - TDENGINE_HOST=tdengine
+      - TDENGINE_PORT=6030
+    depends_on:
+      - postgres
+      - redis
+      - emqx
+      - tdengine
+    volumes:
+      - ./logs:/app/logs
+      - ./media:/app/media
+    networks:
+      - forest_network
+
+  # Celery Worker
+  celery_worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: forest_celery_worker
+    restart: unless-stopped
+    command: celery -A config worker -l info
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=forest_monitor
+      - DATABASE_USER=forest_user
+      - DATABASE_PASSWORD=forest_pass
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - MQTT_BROKER_HOST=emqx
+      - MQTT_BROKER_PORT=1883
+      - TDENGINE_HOST=tdengine
+      - TDENGINE_PORT=6030
+    depends_on:
+      - postgres
+      - redis
+      - emqx
+      - tdengine
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - forest_network
+
+  # Celery Beat
+  celery_beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: forest_celery_beat
+    restart: unless-stopped
+    command: celery -A config beat -l info
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=forest_monitor
+      - DATABASE_USER=forest_user
+      - DATABASE_PASSWORD=forest_pass
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - forest_network
+
+  # PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: forest_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=forest_monitor
+      - POSTGRES_USER=forest_user
+      - POSTGRES_PASSWORD=forest_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - forest_network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: forest_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - forest_network
+
+  # EMQX (MQTT Broker)
+  emqx:
+    image: emqx/emqx:5.4
+    container_name: forest_emqx
+    restart: unless-stopped
+    environment:
+      - EMQX_NAME=emqx
+      - EMQX_HOST=127.0.0.1
+    ports:
+      - "1883:1883"    # MQTT
+      - "8083:8083"    # MQTT WebSocket
+      - "8084:8084"    # MQTT WSS
+      - "8883:8883"    # MQTT SSL
+      - "18083:18083"  # Dashboard
+    volumes:
+      - emqx_data:/opt/emqx/data
+      - emqx_log:/opt/emqx/log
+    networks:
+      - forest_network
+
+  # TDengine
+  tdengine:
+    image: tdengine/tdengine:3.3.0.0
+    container_name: forest_tdengine
+    restart: unless-stopped
+    ports:
+      - "6030:6030"    # Native
+      - "6041:6041"    # REST
+      - "6043:6043"    # WebSocket
+      - "6044:6044"    # Schemaless
+      - "6046:6046"    # Prometheus
+      - "6047:6047"    # Grafana
+      - "6048:6048"    # Data Node
+      - "6049:6049"    # MQTT
+    volumes:
+      - tdengine_data:/var/lib/taos
+      - tdengine_log:/var/log/taos
+    networks:
+      - forest_network
+
+  # MinIO (文件存储)
+  minio:
+    image: minio/minio:latest
+    container_name: forest_minio
+    restart: unless-stopped
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"    # API
+      - "9001:9001"    # Console
+    volumes:
+      - minio_data:/data
+    networks:
+      - forest_network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: forest_rabbitmq
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - forest_network
+
+  # Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: forest_zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - forest_network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: forest_kafka
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    networks:
+      - forest_network
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: forest_prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - forest_network
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: forest_grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - forest_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  emqx_data:
+  emqx_log:
+  tdengine_data:
+  tdengine_log:
+  minio_data:
+  rabbitmq_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  forest_network:
+    driver: bridge

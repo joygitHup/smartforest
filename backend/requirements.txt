@@ -1,0 +1,49 @@
+# Django 核心
+Django==5.1.4
+djangorestframework==3.15.2
+django-cors-headers==4.6.0
+django-filter==24.3
+
+# 实时通信
+django-channels==4.2.0
+channels-redis==4.2.0
+
+# 数据库
+psycopg2-binary==2.9.10
+tdengine-connector==3.5.0
+
+# 缓存与队列
+redis==5.2.1
+celery==5.4.0
+django-celery-beat==2.7.0
+django-celery-results==2.5.1
+
+# MQTT
+paho-mqtt==2.2.0
+
+# 文件存储
+django-storages==1.14.4
+boto3==1.35.81
+
+# 认证与权限
+djangorestframework-simplejwt==5.4.0
+
+# API 文档
+drf-spectacular==0.28.0
+
+# 监控与日志
+prometheus-client==0.21.1
+django-prometheus==2.3.1
+structlog==24.4.0
+
+# 工具
+python-decouple==3.8
+Pillow==11.0.0
+requests==2.32.3
+
+# 开发工具
+django-debug-toolbar==4.4.6
+pytest==8.3.4
+pytest-django==4.9.0
+pytest-asyncio==0.24.0
+factory-boy==3.3.1

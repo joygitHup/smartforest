@@ -1,6 +1,6 @@
 # 项目上下文
 
-### 版本技术栈
+## 前端技术栈
 
 - **Framework**: Next.js 16 (App Router)
 - **Core**: React 19
@@ -8,7 +8,23 @@
 - **UI 组件**: shadcn/ui (基于 Radix UI)
 - **Styling**: Tailwind CSS 4
 
+## 后端技术栈
+
+- **应用框架**: Django 5.x + DRF
+- **实时通信**: Django Channels (WebSocket)
+- **设备接入**: EMQX (MQTT Broker)
+- **消息队列**: RabbitMQ + Kafka
+- **任务调度**: Celery + Redis
+- **业务数据库**: PostgreSQL 15+
+- **时序数据库**: TDengine
+- **缓存**: Redis
+- **文件存储**: 阿里云OSS / MinIO
+- **容器编排**: Docker + Kubernetes
+- **监控**: Prometheus + Grafana
+
 ## 目录结构
+
+### 前端目录
 
 ```
 ├── public/                 # 静态资源
@@ -38,9 +54,38 @@
 └── tsconfig.json           # TypeScript 配置
 ```
 
+### 后端目录
+
+```
+├── backend/
+│   ├── config/                 # Django 配置
+│   │   ├── settings.py        # 主配置
+│   │   ├── urls.py            # 路由配置
+│   │   ├── asgi.py            # ASGI 入口（WebSocket）
+│   │   ├── wsgi.py            # WSGI 入口
+│   │   └── celery.py          # Celery 配置
+│   ├── apps/                  # 业务应用
+│   │   ├── devices/           # 设备管理
+│   │   ├── alerts/            # 告警管理
+│   │   ├── reports/           # 报表中心
+│   │   └── users/             # 用户管理
+│   ├── core/                  # 核心模块
+│   │   ├── consumers.py       # WebSocket 消费者
+│   │   ├── routing.py         # WebSocket 路由
+│   │   ├── mqtt_client.py     # MQTT 客户端
+│   │   └── tdengine_client.py # TDengine 客户端
+│   ├── scripts/               # 脚本
+│   ├── docker/                # Docker 配置
+│   ├── docker-compose.yml     # Docker Compose
+│   ├── requirements.txt       # Python 依赖
+│   └── manage.py              # Django 管理命令
+```
+
 - 项目文件（如 app 目录、pages 目录、components 等）默认初始化到 `src/` 目录下。
 
 ## 包管理规范
+
+### 前端
 
 **仅允许使用 pnpm** 作为包管理器，**严禁使用 npm 或 yarn**。
 **常用命令**：
@@ -48,6 +93,84 @@
 - 安装开发依赖：`pnpm add -D <package>`
 - 安装所有依赖：`pnpm install`
 - 移除依赖：`pnpm remove <package>`
+
+### 后端
+
+**使用 pip** 管理 Python 依赖。
+**常用命令**：
+- 安装依赖：`pip install -r requirements.txt`
+- 导出依赖：`pip freeze > requirements.txt`
+- 创建虚拟环境：`python -m venv venv`
+- 激活虚拟环境：`source venv/bin/activate` (Linux/Mac)
+
+## 后端开发规范
+
+### Django 开发规范
+
+1. **应用结构**：每个业务模块独立为一个 Django app
+2. **模型设计**：使用 Django ORM，复杂查询使用 `select_related` 和 `prefetch_related`
+3. **序列化器**：使用 DRF Serializer，支持嵌套序列化
+4. **视图**：优先使用 ViewSet + Router，复杂逻辑使用 APIView
+5. **权限控制**：使用 DRF Permission 类，支持 RBAC
+6. **认证**：使用 JWT (SimpleJWT)
+7. **分页**：使用 PageNumberPagination，默认每页 20 条
+8. **过滤**：使用 django-filter
+9. **异步任务**：使用 Celery，任务定义在 `tasks.py`
+10. **日志**：使用 structlog，结构化日志
+
+### 数据库规范
+
+1. **PostgreSQL**：存储业务数据（设备、告警、用户等）
+2. **TDengine**：存储时序数据（遥测数据）
+3. **Redis**：缓存、会话、Celery 队列
+4. **索引**：为常用查询字段创建索引
+5. **迁移**：使用 `python manage.py makemigrations` 和 `migrate`
+
+### API 设计规范
+
+1. **RESTful 风格**：资源命名使用名词复数
+2. **版本控制**：URL 中包含版本号 `/api/v1/`
+3. **响应格式**：统一使用 `{code, message, data}` 格式
+4. **错误处理**：使用 DRF 异常处理器，返回标准错误格式
+5. **文档**：使用 drf-spectacular 自动生成 OpenAPI 文档
+
+### WebSocket 规范
+
+1. **路由**：使用 Django Channels routing
+2. **消费者**：使用 AsyncWebsocketConsumer
+3. **认证**：WebSocket 连接时验证 JWT Token
+4. **心跳**：客户端定期发送 ping，服务端回复 pong
+5. **重连**：客户端实现自动重连机制
+
+### MQTT 规范
+
+1. **主题格式**：`forest/{device_type}/{device_id}/{message_type}`
+2. **QoS**：遥测数据使用 QoS 0，控制指令使用 QoS 1
+3. **遗嘱消息**：设备离线时发布遗嘱消息
+4. **数据格式**：使用 JSON 格式
+
+### Celery 规范
+
+1. **任务定义**：使用 `@shared_task` 装饰器
+2. **重试机制**：使用 `autoretry_for` 和 `retry_backoff`
+3. **超时**：设置 `soft_time_limit` 和 `time_limit`
+4. **监控**：使用 Flower 监控 Celery 任务
+
+### Docker 规范
+
+1. **镜像**：使用多阶段构建，减小镜像体积
+2. **非 root 用户**：使用非 root 用户运行
+3. **健康检查**：配置 HEALTHCHECK
+4. **日志**：日志输出到 stdout/stderr
+5. **环境变量**：使用环境变量配置，不硬编码
+
+### Kubernetes 规范
+
+1. **Deployment**：使用 Deployment 管理 Pod
+2. **Service**：使用 ClusterIP 暴露服务
+3. **HPA**：配置水平自动扩缩容
+4. **资源限制**：设置 requests 和 limits
+5. **健康检查**：配置 livenessProbe 和 readinessProbe
 
 ## 开发规范
 

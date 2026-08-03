@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forest-backend
+  labels:
+    app: forest-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: forest-backend
+  template:
+    metadata:
+      labels:
+        app: forest-backend
+    spec:
+      containers:
+      - name: backend
+        image: forest-monitor/backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DEBUG
+          value: "False"
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: forest-secrets
+              key: django-secret-key
+        - name: DATABASE_HOST
+          value: "postgres-service"
+        - name: DATABASE_PORT
+          value: "5432"
+        - name: DATABASE_NAME
+          value: "forest_monitor"
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: forest-secrets
+              key: db-user
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: forest-secrets
+              key: db-password
+        - name: REDIS_URL
+          value: "redis://redis-service:6379/0"
+        - name: CELERY_BROKER_URL
+          value: "redis://redis-service:6379/1"
+        - name: MQTT_BROKER_HOST
+          value: "emqx-service"
+        - name: MQTT_BROKER_PORT
+          value: "1883"
+        - name: TDENGINE_HOST
+          value: "tdengine-service"
+        - name: TDENGINE_PORT
+          value: "6030"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health/
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: forest-backend-service
+spec:
+  selector:
+    app: forest-backend
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: forest-backend-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: forest-backend
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
