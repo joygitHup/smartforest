@@ -5,6 +5,7 @@ from pathlib import Path
 from decouple import config
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,15 +79,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
+
+
 # Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DATABASE_NAME', default='forest_monitor'),
-        'USER': config('DATABASE_USER', default='forest_user'),
-        'PASSWORD': config('DATABASE_PASSWORD', default='forest_pass'),
+        'USER': config('DATABASE_USER', default='postgres'),
+        'PASSWORD': config('DATABASE_PASSWORD', default='123456'),
         'HOST': config('DATABASE_HOST', default='localhost'),
         'PORT': config('DATABASE_PORT', default='5432'),
+
     }
 }
 
@@ -95,7 +99,7 @@ TDENGINE_CONFIG = {
     'HOST': config('TDENGINE_HOST', default='localhost'),
     'PORT': config('TDENGINE_PORT', default=6030, cast=int),
     'USER': config('TDENGINE_USER', default='root'),
-    'PASSWORD': config('TDENGINE_PASSWORD', default='taosdata'),
+    'PASSWORD': config('TDENGINE_PASSWORD', default='Taostaos@123'),
     'DATABASE': config('TDENGINE_DB', default='forest_monitor'),
 }
 
@@ -138,7 +142,7 @@ MQTT_CONFIG = {
 }
 
 # RabbitMQ Configuration
-RABBITMQ_URL = config('RABBITMQ_URL', default='amqp://guest:guest@localhost:5672/')
+RABBITMQ_URL = config('RABBITMQ_URL', default='amqp://admin:admin@localhost:5672/')
 
 # Kafka Configuration
 KAFKA_BOOTSTRAP_SERVERS = config('KAFKA_BOOTSTRAP_SERVERS', default='localhost:9092').split(',')
@@ -184,6 +188,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',

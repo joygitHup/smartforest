@@ -6,6 +6,21 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    # 添加 related_name 解决冲突
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='custom_user_set',  # 自定义反向名称
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='custom_user_set',  # 自定义反向名称
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
     """自定义用户模型"""
     ROLE_CHOICES = [
         ('admin', '系统管理员'),
@@ -30,6 +45,8 @@ class User(AbstractUser):
         db_table = 'users'
         verbose_name = '用户'
         verbose_name_plural = verbose_name
+    def __str__(self):
+        return self.username
 
 
 class Notification(models.Model):
