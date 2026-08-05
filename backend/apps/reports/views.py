@@ -15,8 +15,8 @@ from .serializers import (
     DailyReportSerializer, DeviceStatisticsSerializer,
     EnvironmentalDataSerializer, ReportOverviewSerializer
 )
-from apps.devices.models import Device, DeviceTelemetry
-from apps.alerts.models import Alert
+from devices.models import Device, DeviceTelemetry
+from alerts.models import Alert
 
 
 class DailyReportViewSet(viewsets.ReadOnlyModelViewSet):

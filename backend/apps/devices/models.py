@@ -153,6 +153,7 @@ class DeviceCommand(models.Model):
     created_at = models.DateTimeField('创建时间', auto_now_add=True)
     
     class Meta:
+        app_label = 'devices'  # ✅ 添加这一行
         db_table = 'device_commands'
         verbose_name = '设备指令'
         verbose_name_plural = verbose_name

@@ -8,7 +8,7 @@ import uuid
 import logging
 
 from .models import Alert, AlertAction, FireTracing
-from apps.devices.models import Device
+from devices.models import Device
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,7 @@
 """
 Django settings for forest_monitor project.
 """
+import sys
 from pathlib import Path
 from decouple import config
 import os
@@ -8,6 +9,7 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-production')
@@ -39,10 +41,10 @@ INSTALLED_APPS = [
     'django_prometheus',
     
     # Local apps
-    'apps.devices',
-    'apps.alerts',
-    'apps.reports',
-    'apps.users',
+    'devices',
+    'alerts',
+    'reports',
+    'users',
 ]
 
 MIDDLEWARE = [
