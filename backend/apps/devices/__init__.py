@@ -1,2 +1,2 @@
-# device/__init__.py
-default_app_config = 'devices.apps.DeviceConfig'
+# apps/devices/__init__.py
+default_app_config = 'apps.devices.apps.DeviceConfig'

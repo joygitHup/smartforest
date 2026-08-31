@@ -48,7 +48,7 @@ export const deviceApi = {
     page?: number;
     page_size?: number;
   }) => {
-    return apiClient.get<{ results: Device[]; count: number }>('/devices/', { params });
+    return apiClient.get<{ results: Device[]; count: number }>('/devices/devices', { params });
   },
 
   // 获取设备详情

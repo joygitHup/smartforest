@@ -1,3 +1,4 @@
+# apps/devices/tasks.py
 """
 Device Celery tasks.
 """
@@ -16,7 +17,6 @@ def send_ptz_command(self, device_id, direction, speed=5):
     try:
         device = Device.objects.get(device_id=device_id)
         
-        # 创建指令记录
         command = DeviceCommand.objects.create(
             device=device,
             command_type='ptz_control',
@@ -28,7 +28,6 @@ def send_ptz_command(self, device_id, direction, speed=5):
         # from core.mqtt_client import publish_command
         # publish_command(device_id, 'ptz_control', command.command_params)
         
-        # 更新指令状态
         command.status = 'sent'
         command.sent_at = timezone.now()
         command.save()
@@ -50,7 +49,6 @@ def send_device_command(self, device_id, command_type, command_params=None):
     try:
         device = Device.objects.get(device_id=device_id)
         
-        # 创建指令记录
         command = DeviceCommand.objects.create(
             device=device,
             command_type=command_type,
@@ -62,7 +60,6 @@ def send_device_command(self, device_id, command_type, command_params=None):
         # from core.mqtt_client import publish_command
         # publish_command(device_id, command_type, command_params)
         
-        # 更新指令状态
         command.status = 'sent'
         command.sent_at = timezone.now()
         command.save()
@@ -103,7 +100,6 @@ def process_device_telemetry(device_id, telemetry_data):
     try:
         device = Device.objects.get(device_id=device_id)
         
-        # 创建遥测数据记录
         telemetry = DeviceTelemetry.objects.create(
             device=device,
             timestamp=timezone.now(),
@@ -123,10 +119,6 @@ def process_device_telemetry(device_id, telemetry_data):
             thermal_hotspot_x=telemetry_data.get('thermal_hotspot_x'),
             thermal_hotspot_y=telemetry_data.get('thermal_hotspot_y'),
         )
-        
-        # TODO: 同步写入 TDengine
-        # from core.tdengine_client import write_telemetry
-        # write_telemetry(device_id, telemetry_data)
         
         logger.info(f'Telemetry processed for device {device_id}')
         return {'status': 'success', 'telemetry_id': telemetry.id}

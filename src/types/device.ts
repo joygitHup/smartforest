@@ -1,4 +1,5 @@
 // types/device.ts
+// src/types/device.ts
 export interface Device {
   id: number;
   device_id: string;
@@ -18,6 +19,7 @@ export interface Device {
   install_date: string | null;
   last_maintenance: string | null;
   communication_type: '4g' | 'lora' | 'wifi' | 'ethernet';
+  communication_type_display?: string;
   signal_strength: number;
   battery_level: number | null;
   pan_angle: string | null;
@@ -84,9 +86,9 @@ export interface CreateDeviceData {
   device_name: string;
   device_type: string;
   status?: string;
-  longitude?: number;
-  latitude?: number;
-  altitude?: number;
+  longitude?: number | string;
+  latitude?: number | string;
+  altitude?: number | string;
   region?: string;
   forest_zone?: string;
   firmware_version?: string;
@@ -97,6 +99,6 @@ export interface CreateDeviceData {
   communication_type?: string;
   signal_strength?: number;
   battery_level?: number;
-  pan_angle?: number;
-  tilt_angle?: number;
+  pan_angle?: number | string;
+  tilt_angle?: number | string;
 }

@@ -1,3 +1,4 @@
+# apps/devices/admin.py
 """
 Device admin configuration.
 """
@@ -20,6 +21,7 @@ class DeviceAdmin(admin.ModelAdmin):
     list_filter = ['device_type', 'status', 'region', 'communication_type']
     search_fields = ['device_id', 'device_name', 'region', 'forest_zone']
     readonly_fields = ['created_at', 'updated_at']
+    list_per_page = 50  # ✅ 添加分页
 
     fieldsets = (
         ('基本信息', {
@@ -58,7 +60,6 @@ class DeviceAdmin(admin.ModelAdmin):
             'border-radius: 4px; font-size: 12px;">{}</span>',
             color, obj.get_status_display()
         )
-
     status_badge.short_description = '状态'
 
     def device_type_badge(self, obj):
@@ -75,7 +76,6 @@ class DeviceAdmin(admin.ModelAdmin):
             'border-radius: 4px; font-size: 12px;">{}</span>',
             color, obj.get_device_type_display()
         )
-
     device_type_badge.short_description = '设备类型'
 
     def battery_level_badge(self, obj):
@@ -92,7 +92,6 @@ class DeviceAdmin(admin.ModelAdmin):
             '<span style="color: {}; font-weight: bold;">{}%</span>',
             color, obj.battery_level
         )
-
     battery_level_badge.short_description = '电量'
 
     def is_healthy(self, obj):
@@ -105,29 +104,24 @@ class DeviceAdmin(admin.ModelAdmin):
             return format_html('<span style="color: #28a745;">✓ 健康</span>')
         else:
             return format_html('<span style="color: #dc3545;">✗ 失联</span>')
-
     is_healthy.short_description = '健康状态'
 
     actions = ['mark_online', 'mark_offline', 'mark_maintenance', 'mark_alarm']
 
     def mark_online(self, request, queryset):
         queryset.update(status='online', last_online_time=timezone.now(), last_heartbeat=timezone.now())
-
     mark_online.short_description = '标记为在线'
 
     def mark_offline(self, request, queryset):
         queryset.update(status='offline')
-
     mark_offline.short_description = '标记为离线'
 
     def mark_maintenance(self, request, queryset):
         queryset.update(status='maintenance')
-
     mark_maintenance.short_description = '标记为维护中'
 
     def mark_alarm(self, request, queryset):
         queryset.update(status='alarm')
-
     mark_alarm.short_description = '标记为告警'
 
 
@@ -142,10 +136,20 @@ class DeviceTelemetryAdmin(admin.ModelAdmin):
     search_fields = ['device__device_id', 'device__device_name']
     readonly_fields = ['created_at']
     date_hierarchy = 'timestamp'
+    list_per_page = 50  # ✅ 使用分页而不是切片
 
+    # ❌ 删除或修改这个方法
+    # def get_queryset(self, request):
+    #     """仅显示最近1000条，避免后台卡顿"""
+    #     return super().get_queryset(request)[:1000]
+
+    # ✅ 如果确实需要限制数据量，使用 filter
     def get_queryset(self, request):
-        """仅显示最近1000条，避免后台卡顿"""
-        return super().get_queryset(request)[:1000]
+        """限制显示最近的数据，避免后台卡顿"""
+        qs = super().get_queryset(request)
+        # 只显示最近30天的数据（而不是使用切片）
+        thirty_days_ago = timezone.now() - datetime.timedelta(days=30)
+        return qs.filter(timestamp__gte=thirty_days_ago)
 
 
 @admin.register(DeviceCommand)
@@ -155,6 +159,7 @@ class DeviceCommandAdmin(admin.ModelAdmin):
     list_filter = ['status', 'command_type']
     search_fields = ['device__device_id', 'device__device_name']
     readonly_fields = ['created_at']
+    list_per_page = 50  # ✅ 添加分页
 
     def status_badge(self, obj):
         """状态标签"""
@@ -172,5 +177,4 @@ class DeviceCommandAdmin(admin.ModelAdmin):
             'border-radius: 4px; font-size: 12px;">{}</span>',
             color, obj.get_status_display()
         )
-
     status_badge.short_description = '状态'

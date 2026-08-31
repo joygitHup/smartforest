@@ -5,7 +5,11 @@ import { useState, useMemo } from 'react';
 import { useDevices, useDevice } from '@/hooks/useDevices';
 import Pagination, { usePagination } from '@/components/ui/pagination';
 import { Device } from '@/types/device';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { authApi } from '@/lib/api/auth';
 import { toast } from 'sonner';
+
 
 const typeLabels: Record<string, string> = {
   dual_camera: '双目云台',
@@ -22,6 +26,7 @@ const statusLabels: Record<string, { text: string; color: string }> = {
 };
 
 export default function DevicesPage() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -44,6 +49,18 @@ export default function DevicesPage() {
     status: statusFilter !== 'all' ? statusFilter : undefined,
     pageSize: 10,
   });
+
+   // ✅ 检查是否已登录
+  useEffect(() => {
+    if (!authApi.isAuthenticated()) {
+      router.replace('/login');
+    }
+  }, [router]);
+
+  // 如果未登录，不渲染页面
+  if (!authApi.isAuthenticated()) {
+    return null;
+  }
 
   // 使用自定义 Hook 获取设备详情
   const {

@@ -3,8 +3,8 @@ Alert models for forest monitoring system.
 """
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from devices.models import Device
 
+from apps.devices.models import Device
 
 
 class AlertLevel(models.TextChoices):
@@ -104,6 +104,7 @@ class AlertAction(models.Model):
     created_at = models.DateTimeField('创建时间', auto_now_add=True)
     
     class Meta:
+        app_label = 'alerts'
         db_table = 'alert_actions'
         verbose_name = '告警处置记录'
         verbose_name_plural = verbose_name
@@ -136,6 +137,7 @@ class FireTracing(models.Model):
     updated_at = models.DateTimeField('更新时间', auto_now=True)
     
     class Meta:
+        app_label = 'alerts'
         db_table = 'fire_tracing'
         verbose_name = '火情溯源'
         verbose_name_plural = verbose_name

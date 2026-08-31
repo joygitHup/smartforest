@@ -22,10 +22,10 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
     # API Endpoints
-    path('api/devices/', include('devices.urls')),
-    path('api/alerts/', include('alerts.urls')),
-    path('api/reports/', include('reports.urls')),
-    path('api/users/', include('users.urls')),
+    path('api/alerts/', include('apps.alerts.urls')),
+    path('api/devices/', include('apps.devices.urls')),
+    path('api/reports/', include('apps.reports.urls')),
+    path('api/users/', include('apps.users.urls')),
     
     # Prometheus Metrics
     path('metrics/', include('django_prometheus.urls')),

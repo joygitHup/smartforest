@@ -1,3 +1,4 @@
+# apps/alerts/tasks.py
 """
 Alert Celery tasks.
 """
@@ -8,7 +9,7 @@ import uuid
 import logging
 
 from .models import Alert, AlertAction, FireTracing
-from devices.models import Device
+from apps.devices.models import Device
 
 logger = logging.getLogger(__name__)
 
@@ -43,13 +44,13 @@ def process_alert(self, alert_data):
         
         logger.info(f'Alert created: {alert_id} for device {device.device_id}')
         
-        # TODO: 通过 WebSocket 推送到大屏
-        # from core.websocket_client import push_alert_to_dashboard
-        # push_alert_to_dashboard(alert)
+        # 如果是火情或烟雾，自动启动溯源
+        if alert.alert_type in ['fire', 'smoke']:
+            run_fire_tracing.delay(alert.id)
         
-        # TODO: 根据告警级别发送通知
-        # if alert.alert_level in ['level_1', 'level_2']:
-        #     send_notification.delay(alert.id)
+        # 根据告警级别发送通知
+        if alert.alert_level in ['level_1', 'level_2']:
+            send_notification.delay(alert.id)
         
         return {'status': 'success', 'alert_id': alert_id}
         
@@ -81,7 +82,6 @@ def run_fire_tracing(self, alert_id):
         )
         
         # 计算起火点（简化算法：多设备交叉定位）
-        # 实际应使用 FARSITE 算法
         if related_alerts.exists():
             # 使用多设备告警位置的平均值作为起火点
             avg_lon = sum(a.longitude for a in related_alerts if a.longitude) / max(1, related_alerts.filter(longitude__isnull=False).count())
@@ -96,11 +96,11 @@ def run_fire_tracing(self, alert_id):
         # 创建火情溯源记录
         fire_tracing = FireTracing.objects.create(
             alert=alert,
-            origin_longitude=avg_lon,
-            origin_latitude=avg_lat,
+            origin_longitude=float(avg_lon) if avg_lon else 0,
+            origin_latitude=float(avg_lat) if avg_lat else 0,
             origin_confidence=confidence,
             algorithm='FARSITE',
-            input_devices=[a.device.device_id for a in related_alerts] + [alert.device.device_id],
+            input_devices=[d.device_id for d in nearby_devices] + [alert.device.device_id],
             weather_data={
                 'wind_speed': 3.5,
                 'wind_direction': 180,

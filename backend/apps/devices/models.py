@@ -63,6 +63,7 @@ class Device(models.Model):
     updated_at = models.DateTimeField('更新时间', auto_now=True)
     
     class Meta:
+        app_label = 'devices'
         db_table = 'devices'
         verbose_name = '设备'
         verbose_name_plural = verbose_name
@@ -115,6 +116,7 @@ class DeviceTelemetry(models.Model):
     created_at = models.DateTimeField('创建时间', auto_now_add=True)
     
     class Meta:
+        app_label = 'devices'
         db_table = 'device_telemetry'
         verbose_name = '设备遥测数据'
         verbose_name_plural = verbose_name

@@ -1,3 +1,4 @@
+# apps/devices/views.py
 """
 Device views for API.
 """
@@ -7,33 +8,39 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Avg, Sum
 from django.shortcuts import get_object_or_404
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
-from .models import Device, DeviceTelemetry, DeviceCommand
+from .models import Device, DeviceTelemetry, DeviceCommand, DeviceStatus
 from .serializers import (
     DeviceListSerializer, DeviceDetailSerializer,
-    DeviceTelemetrySerializer, DeviceCommandSerializer,
-    PTZControlSerializer, DeviceCreateSerializer, DeviceUpdateSerializer
+    DeviceCreateSerializer, DeviceUpdateSerializer,
+    DeviceTelemetrySerializer, DeviceTelemetryCreateSerializer,
+    DeviceCommandSerializer, DeviceCommandCreateSerializer,
+    PTZControlSerializer, DeviceBatchDeleteSerializer,
+    DeviceStatisticsSerializer
 )
-from .filters import DeviceFilter
-from .tasks import send_ptz_command, send_device_command
+from .filters import DeviceFilter, DeviceTelemetryFilter, DeviceCommandFilter
+from .tasks import send_ptz_command, send_device_command, update_device_status
 
 
 class DeviceViewSet(viewsets.ModelViewSet):
     """设备管理视图集 - 支持完整的增删改查"""
     queryset = Device.objects.all()
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
     filterset_class = DeviceFilter
-    search_fields = ['device_id', 'device_name', 'region', 'forest_zone']
-    ordering_fields = ['created_at', 'last_online_time', 'device_name']
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['device_id', 'device_name', 'region', 'forest_zone', 'manufacturer']
+    ordering_fields = ['created_at', 'last_online_time', 'device_name', 'battery_level', 'signal_strength']
     ordering = ['-created_at']
 
     def get_serializer_class(self):
         """根据操作返回不同的序列化器"""
         if self.action == 'list':
             return DeviceListSerializer
-        elif self.action in ['create']:
+        elif self.action == 'create':
             return DeviceCreateSerializer
         elif self.action in ['update', 'partial_update']:
             return DeviceUpdateSerializer
@@ -44,7 +51,6 @@ class DeviceViewSet(viewsets.ModelViewSet):
         创建设备
         校验 device_id 唯一性
         """
-        # 检查 device_id 是否已存在
         device_id = request.data.get('device_id')
         if device_id and Device.objects.filter(device_id=device_id).exists():
             return Response(
@@ -56,7 +62,6 @@ class DeviceViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        # 返回完整详情
         detail_serializer = DeviceDetailSerializer(serializer.instance)
         return Response(detail_serializer.data, status=status.HTTP_201_CREATED)
 
@@ -68,29 +73,21 @@ class DeviceViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        # 禁止修改 device_id
         if 'device_id' in request.data and request.data['device_id'] != instance.device_id:
             return Response(
                 {'error': 'device_id 不可修改，请使用其他字段进行更新'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 检查新的 device_id 是否与其他设备冲突（如果允许修改的话）
-        # 但这里我们完全禁止修改
-
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        # 返回完整详情
         detail_serializer = DeviceDetailSerializer(instance)
         return Response(detail_serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
-        """
-        部分更新设备
-        禁止修改 device_id
-        """
+        """部分更新设备"""
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
@@ -100,14 +97,10 @@ class DeviceViewSet(viewsets.ModelViewSet):
         检查是否有关联的遥测数据或指令
         """
         instance = self.get_object()
-
-        # 检查关联数据
         telemetry_count = instance.telemetry.count()
         command_count = instance.commands.count()
 
         if telemetry_count > 0 or command_count > 0:
-            # 有关联数据时，返回警告但不阻止删除
-            # 可选择是否强制删除
             force = request.query_params.get('force', 'false').lower() == 'true'
             if not force:
                 return Response(
@@ -126,7 +119,34 @@ class DeviceViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    # ==================== 原有的自定义操作 ====================
+    @action(detail=False, methods=['post'])
+    def batch_delete(self, request):
+        """批量删除设备"""
+        serializer = DeviceBatchDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        device_ids = serializer.validated_data['device_ids']
+        force = serializer.validated_data['force']
+
+        devices = Device.objects.filter(id__in=device_ids)
+        deleted_count = 0
+        errors = []
+
+        for device in devices:
+            try:
+                if not force and (device.telemetry.exists() or device.commands.exists()):
+                    errors.append(f'设备 {device.device_id} 有关联数据')
+                    continue
+                device.delete()
+                deleted_count += 1
+            except Exception as e:
+                errors.append(f'删除 {device.device_id} 失败: {str(e)}')
+
+        return Response({
+            'deleted_count': deleted_count,
+            'total': len(device_ids),
+            'errors': errors
+        })
 
     @action(detail=True, methods=['post'])
     def ptz_control(self, request, pk=None):
@@ -135,7 +155,6 @@ class DeviceViewSet(viewsets.ModelViewSet):
         serializer = PTZControlSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # 发送云台控制指令
         task = send_ptz_command.delay(
             device_id=device.device_id,
             direction=serializer.validated_data['direction'],
@@ -164,25 +183,66 @@ class DeviceViewSet(viewsets.ModelViewSet):
             'message': '重启指令已发送'
         })
 
+    @action(detail=True, methods=['post'])
+    def update_status(self, request, pk=None):
+        """手动更新设备状态"""
+        device = self.get_object()
+        status_value = request.data.get('status')
+
+        if not status_value:
+            return Response(
+                {'error': '请提供 status 字段'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        valid_statuses = [choice[0] for choice in DeviceStatus.choices]
+        if status_value not in valid_statuses:
+            return Response(
+                {'error': f'无效的状态值，可选: {valid_statuses}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        device.status = status_value
+        if status_value == 'online':
+            device.last_online_time = timezone.now()
+        device.last_heartbeat = timezone.now()
+        device.save()
+
+        return Response({
+            'message': f'设备状态已更新为: {device.get_status_display()}',
+            'status': device.status
+        })
+
     @action(detail=False, methods=['get'])
     def statistics(self, request):
         """设备统计"""
+        queryset = self.get_queryset()
+
         stats = {
-            'total': Device.objects.count(),
-            'online': Device.objects.filter(status='online').count(),
-            'offline': Device.objects.filter(status='offline').count(),
-            'alarm': Device.objects.filter(status='alarm').count(),
+            'total': queryset.count(),
+            'online': queryset.filter(status='online').count(),
+            'offline': queryset.filter(status='offline').count(),
+            'alarm': queryset.filter(status='alarm').count(),
+            'maintenance': queryset.filter(status='maintenance').count(),
             'by_type': dict(
-                Device.objects.values_list('device_type').annotate(
+                queryset.values_list('device_type').annotate(
                     count=Count('id')
                 ).values_list('device_type', 'count')
             ),
             'by_region': dict(
-                Device.objects.values_list('region').annotate(
+                queryset.values_list('region').annotate(
                     count=Count('id')
                 ).values_list('region', 'count')
-            )
+            ),
+            'by_status': dict(
+                queryset.values_list('status').annotate(
+                    count=Count('id')
+                ).values_list('status', 'count')
+            ),
+            'avg_battery': queryset.aggregate(avg=Avg('battery_level'))['avg'] or 0,
+            'avg_signal': queryset.aggregate(avg=Avg('signal_strength'))['avg'] or 0,
         }
+
         return Response(stats)
 
     @action(detail=True, methods=['get'])
@@ -203,57 +263,56 @@ class DeviceViewSet(viewsets.ModelViewSet):
         """获取设备指令历史"""
         device = self.get_object()
         limit = int(request.query_params.get('limit', 50))
-        commands = device.commands.all()[:limit]
+        status_filter = request.query_params.get('status')
+
+        commands = device.commands.all()
+        if status_filter:
+            commands = commands.filter(status=status_filter)
+        commands = commands[:limit]
 
         serializer = DeviceCommandSerializer(commands, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['post'])
-    def update_status(self, request, pk=None):
-        """手动更新设备状态"""
-        device = self.get_object()
-        status_value = request.data.get('status')
+    @action(detail=False, methods=['get'])
+    def online(self, request):
+        """获取所有在线设备"""
+        devices = Device.objects.filter(status='online')
+        serializer = DeviceListSerializer(devices, many=True)
+        return Response(serializer.data)
 
-        if not status_value:
-            return Response(
-                {'error': '请提供 status 字段'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # 验证状态值
-        valid_statuses = [choice[0] for choice in DeviceStatus.choices]
-        if status_value not in valid_statuses:
-            return Response(
-                {'error': f'无效的状态值，可选: {valid_statuses}'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        device.status = status_value
-        if status_value == 'online':
-            device.last_online_time = timezone.now()
-        device.last_heartbeat = timezone.now()
-        device.save()
-
-        return Response({
-            'message': f'设备状态已更新为: {device.get_status_display()}',
-            'status': device.status
-        })
+    @action(detail=False, methods=['get'])
+    def low_battery(self, request):
+        """获取低电量设备"""
+        devices = Device.objects.filter(battery_level__lt=20)
+        serializer = DeviceListSerializer(devices, many=True)
+        return Response(serializer.data)
 
 
-class DeviceTelemetryViewSet(viewsets.ReadOnlyModelViewSet):
-    """设备遥测数据视图集（只读）"""
-    queryset = DeviceTelemetry.objects.all()
-    serializer_class = DeviceTelemetrySerializer
+class DeviceTelemetryViewSet(viewsets.ModelViewSet):
+    """设备遥测数据视图集"""
+    queryset = DeviceTelemetry.objects.select_related('device').all()
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['device', 'device__device_type', 'device__region']
-    ordering_fields = ['timestamp']
+    filterset_class = DeviceTelemetryFilter
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['device__device_id', 'device__device_name']
+    ordering_fields = ['timestamp', 'created_at', 'temperature', 'humidity']
     ordering = ['-timestamp']
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return DeviceTelemetryCreateSerializer
+        return DeviceTelemetrySerializer
+
+    def create(self, request, *args, **kwargs):
+        """创建遥测数据"""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['get'])
     def latest(self, request):
         """获取所有设备的最新遥测数据"""
-        # 获取每个设备的最新遥测记录
         from django.db.models import Max
 
         latest_timestamps = DeviceTelemetry.objects.values('device').annotate(
@@ -272,36 +331,67 @@ class DeviceTelemetryViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(latest_data, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['get'])
+    def stats(self, request, pk=None):
+        """获取设备遥测统计"""
+        telemetry = self.get_object()
+        # 计算最近24小时的统计
+        start_time = timezone.now() - timezone.timedelta(hours=24)
+        recent = DeviceTelemetry.objects.filter(
+            device=telemetry.device,
+            timestamp__gte=start_time
+        )
+
+        stats = {
+            'temperature': {
+                'avg': recent.aggregate(avg=Avg('temperature'))['avg'],
+                'max': recent.aggregate(max=Max('temperature'))['max'],
+                'min': recent.aggregate(min=Min('temperature'))['min'],
+            },
+            'humidity': {
+                'avg': recent.aggregate(avg=Avg('humidity'))['avg'],
+                'max': recent.aggregate(max=Max('humidity'))['max'],
+                'min': recent.aggregate(min=Min('humidity'))['min'],
+            },
+            'count': recent.count()
+        }
+        return Response(stats)
+
 
 class DeviceCommandViewSet(viewsets.ModelViewSet):
     """设备指令视图集"""
-    queryset = DeviceCommand.objects.all()
-    serializer_class = DeviceCommandSerializer
+    queryset = DeviceCommand.objects.select_related('device').all()
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['device', 'status', 'command_type']
-    ordering_fields = ['created_at', 'sent_at']
+    filterset_class = DeviceCommandFilter
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['device__device_id', 'device__device_name', 'command_type']
+    ordering_fields = ['created_at', 'sent_at', 'executed_at']
     ordering = ['-created_at']
 
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return DeviceCommandCreateSerializer
+        return DeviceCommandSerializer
+
     def create(self, request, *args, **kwargs):
-        """
-        创建指令并立即发送
-        """
+        """创建指令并发送"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        device = serializer.validated_data['device']
+        device_id = serializer.validated_data['device_id']
         command_type = serializer.validated_data['command_type']
         command_params = serializer.validated_data.get('command_params', {})
 
-        # 异步发送指令
-        task = send_device_command.delay(
-            device_id=device.device_id,
-            command_type=command_type,
-            command_params=command_params
-        )
+        # 查找设备
+        try:
+            device = Device.objects.get(device_id=device_id)
+        except Device.DoesNotExist:
+            return Response(
+                {'error': f'设备 {device_id} 不存在'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-        # 创建指令记录（由 task 创建，但我们可以先创建）
+        # 创建指令记录
         command = DeviceCommand.objects.create(
             device=device,
             command_type=command_type,
@@ -309,14 +399,18 @@ class DeviceCommandViewSet(viewsets.ModelViewSet):
             status='pending'
         )
 
-        return Response(
-            {
-                'message': '指令已创建，正在发送',
-                'command_id': command.id,
-                'task_id': task.id
-            },
-            status=status.HTTP_202_ACCEPTED
+        # 异步发送指令
+        task = send_device_command.delay(
+            device_id=device_id,
+            command_type=command_type,
+            command_params=command_params
         )
+
+        return Response({
+            'message': '指令已创建，正在发送',
+            'command_id': command.id,
+            'task_id': task.id
+        }, status=status.HTTP_202_ACCEPTED)
 
     @action(detail=True, methods=['post'])
     def retry(self, request, pk=None):
@@ -329,7 +423,6 @@ class DeviceCommandViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 重置状态并重新发送
         command.status = 'pending'
         command.save()
 

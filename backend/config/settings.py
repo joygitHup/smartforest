@@ -7,9 +7,15 @@ from decouple import config
 import os
 
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+# ✅ 将 apps 目录添加到 Python 路径
+# APPS_DIR = BASE_DIR / 'apps'
+# if str(APPS_DIR) not in sys.path:
+#     sys.path.insert(0, str(APPS_DIR))
+# print(APPS_DIR)
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-production')
@@ -41,16 +47,17 @@ INSTALLED_APPS = [
     'django_prometheus',
     
     # Local apps
-    'devices',
-    'alerts',
-    'reports',
-    'users',
+    'apps.core',
+    'apps.devices',
+    'apps.alerts',
+    'apps.reports',
+    'apps.users',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -58,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
+
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -81,7 +89,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-
+AUTH_USER_MODEL = 'users.User'
 
 # Database
 DATABASES = {
@@ -218,9 +226,12 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://172.20.128.1:3000',
 ]
 CORS_ALLOW_CREDENTIALS = True
-
+# ✅ 开发环境下允许所有来源（仅用于开发）
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
 # DRF Spectacular (API Documentation)
 SPECTACULAR_SETTINGS = {
     'TITLE': '林智森林智能监控平台 API',
@@ -274,3 +285,7 @@ LOGGING = {
 
 # Create logs directory
 os.makedirs(BASE_DIR / 'logs', exist_ok=True)
+# ✅ 确保使用 Django 的 WSGI 处理请求
+ASGI_APPLICATION = 'config.asgi.application'
+# 同时保留 WSGI
+WSGI_APPLICATION = 'config.wsgi.application'

@@ -8,7 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 app = Celery('forest_monitor')
 app.config_from_object('django.conf:settings', namespace='CELERY')
-app.autodiscover_tasks(['apps.devices', 'apps.alerts', 'apps.reports'])
+app.autodiscover_tasks(['apps.devices', 'apps.alerts', 'apps.reports','apps.users'])
 
 
 @app.task(bind=True, ignore_result=True)
