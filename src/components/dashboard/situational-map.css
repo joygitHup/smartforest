@@ -1,0 +1,172 @@
+/* 态势地图：HTML 标注在 DOM 层，不受 canvas 滤镜影响 */
+
+.sf-map-container,
+.sf-map-container .maplibregl-map,
+.sf-map-container .maplibregl-canvas-container,
+.sf-map-container .maplibregl-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 不要给 canvas 加重滤镜，热力/火险圆点也画在 canvas 上 */
+.sf-map-container .maplibregl-canvas {
+  filter: none;
+}
+
+.maplibregl-marker {
+  z-index: 2;
+}
+
+/* —— 设备图钉 —— */
+.sf-pin {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.sf-pin__dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 999px;
+  background: var(--pin, #10b981);
+  border: 2px solid #0a1628;
+  box-shadow: 0 0 0 1px rgba(232, 241, 255, 0.35), 0 0 12px var(--pin, #10b981);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.sf-pin__pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 999px;
+  border: 2px solid var(--pin, #10b981);
+  opacity: 0;
+  pointer-events: none;
+  animation: sf-pin-pulse 2.2s ease-out infinite;
+}
+
+.sf-pin.is-alarm .sf-pin__pulse {
+  animation-duration: 1.3s;
+}
+
+.sf-pin__card {
+  display: none;
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  min-width: 120px;
+  max-width: 180px;
+  padding: 6px 8px;
+  background: rgba(21, 34, 56, 0.96);
+  border: 1px solid #1e3a5f;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 3;
+  white-space: nowrap;
+}
+
+.sf-pin__card::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: #1e3a5f;
+}
+
+.sf-pin__name {
+  color: #e8f1ff;
+  font-size: 11px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sf-pin__meta {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 10px;
+  color: #8b9bb4;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.sf-pin__zone {
+  margin-top: 2px;
+  font-size: 9px;
+  color: #6b7c99;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 放大：默认显示卡片；缩小：仅圆点，悬停再出卡片 */
+.sf-pin:not(.is-compact) .sf-pin__card {
+  display: block;
+}
+
+.sf-pin.is-compact:hover .sf-pin__card,
+.sf-pin.is-compact:focus-within .sf-pin__card {
+  display: block;
+}
+
+.sf-pin.is-compact .sf-pin__dot {
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+}
+
+@keyframes sf-pin-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.maplibregl-ctrl-group {
+  background: #152238 !important;
+  border: 1px solid #1e3a5f !important;
+  box-shadow: none !important;
+}
+
+.maplibregl-ctrl-group button {
+  background-color: #152238 !important;
+  border-color: #1e3a5f !important;
+}
+
+.maplibregl-ctrl-group button + button {
+  border-top-color: #1e3a5f !important;
+}
+
+.maplibregl-ctrl-group button span {
+  filter: invert(1) brightness(1.2);
+}
+
+.maplibregl-ctrl-attrib {
+  background: rgba(12, 26, 46, 0.8) !important;
+  color: #8b9bb4 !important;
+  font-size: 10px !important;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: #8b9bb4 !important;
+}
+
+.sf-map-container .maplibregl-control-container {
+  z-index: 3;
+}

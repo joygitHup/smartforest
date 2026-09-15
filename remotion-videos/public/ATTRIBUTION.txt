@@ -1,0 +1,11 @@
+=== Music Attribution ===
+Generated: 2026-09-04T02:03:24.244Z
+Source: ccMixter (https://ccmixter.org)
+
+"XPR" by sunbyrn
+  Source: https://ccmixter.org/files/sunbyrn/1305
+  License: Attribution (http://creativecommons.org/licenses/by/2.5/)
+
+---
+All tracks sourced from ccMixter under Creative Commons licenses.
+Please include this attribution when publishing your video.

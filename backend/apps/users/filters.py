@@ -4,16 +4,17 @@ User filters for API.
 """
 from django_filters import rest_framework as filters
 from django.contrib.auth import get_user_model
-from .models import Notification
+from .models import Notification, Organization, Role, ForestZone
 
-# ✅ 使用 get_user_model() 获取用户模型
 User = get_user_model()
 
 
 class UserFilter(filters.FilterSet):
-    """用户过滤器"""
+    organization = filters.NumberFilter(field_name='organization_id')
+    role_ref = filters.NumberFilter(field_name='role_ref_id')
+
     class Meta:
-        model = User  # ✅ 使用 get_user_model() 获取的 User
+        model = User
         fields = {
             'username': ['icontains'],
             'first_name': ['icontains'],
@@ -31,8 +32,43 @@ class UserFilter(filters.FilterSet):
         }
 
 
+class OrganizationFilter(filters.FilterSet):
+    name = filters.CharFilter(field_name='name', lookup_expr='icontains')
+    code = filters.CharFilter(field_name='code', lookup_expr='icontains')
+    region = filters.CharFilter(field_name='region', lookup_expr='icontains')
+    org_type = filters.CharFilter(field_name='org_type')
+    is_active = filters.BooleanFilter(field_name='is_active')
+    parent = filters.NumberFilter(field_name='parent_id')
+
+    class Meta:
+        model = Organization
+        fields = ['org_type', 'is_active', 'parent']
+
+
+class ForestZoneFilter(filters.FilterSet):
+    name = filters.CharFilter(field_name='name', lookup_expr='icontains')
+    code = filters.CharFilter(field_name='code', lookup_expr='icontains')
+    region = filters.CharFilter(field_name='region', lookup_expr='icontains')
+    organization = filters.NumberFilter(field_name='organization_id')
+    is_active = filters.BooleanFilter(field_name='is_active')
+
+    class Meta:
+        model = ForestZone
+        fields = ['organization', 'is_active', 'region']
+
+
+class RoleFilter(filters.FilterSet):
+    name = filters.CharFilter(field_name='name', lookup_expr='icontains')
+    code = filters.CharFilter(field_name='code', lookup_expr='icontains')
+    is_enabled = filters.BooleanFilter(field_name='is_enabled')
+    is_system = filters.BooleanFilter(field_name='is_system')
+
+    class Meta:
+        model = Role
+        fields = ['is_enabled', 'is_system']
+
+
 class NotificationFilter(filters.FilterSet):
-    """通知过滤器"""
     class Meta:
         model = Notification
         fields = {

@@ -2,7 +2,7 @@
 WebSocket consumers for real-time communication.
 """
 import json
-from channels.generic.websocket import AsyncWebSocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.tokens import AccessToken
@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class DashboardConsumer(AsyncWebSocketConsumer):
+class DashboardConsumer(AsyncWebsocketConsumer):
     """指挥中心大屏 WebSocket 消费者"""
     
     async def connect(self):
@@ -23,10 +23,15 @@ class DashboardConsumer(AsyncWebSocketConsumer):
             await self.close()
             return
         
-        # 加入大屏组
+        # 加入大屏组 + 用户私信组（站内信）
         self.group_name = 'dashboard'
+        self.user_group = f'user_{self.user.id}'
         await self.channel_layer.group_add(
             self.group_name,
+            self.channel_name
+        )
+        await self.channel_layer.group_add(
+            self.user_group,
             self.channel_name
         )
         
@@ -40,10 +45,16 @@ class DashboardConsumer(AsyncWebSocketConsumer):
     
     async def disconnect(self, close_code):
         """断开连接处理"""
-        await self.channel_layer.group_discard(
-            self.group_name,
-            self.channel_name
-        )
+        if hasattr(self, 'group_name'):
+            await self.channel_layer.group_discard(
+                self.group_name,
+                self.channel_name
+            )
+        if hasattr(self, 'user_group'):
+            await self.channel_layer.group_discard(
+                self.user_group,
+                self.channel_name
+            )
     
     async def receive(self, text_data):
         """接收消息处理"""
@@ -58,9 +69,16 @@ class DashboardConsumer(AsyncWebSocketConsumer):
     # 事件处理方法
     
     async def alert_notification(self, event):
-        """告警通知推送"""
+        """告警通知推送（大屏）"""
         await self.send(text_data=json.dumps({
             'type': 'alert',
+            'data': event['data']
+        }))
+
+    async def in_app_notification(self, event):
+        """站内信推送（用户私信组）"""
+        await self.send(text_data=json.dumps({
+            'type': 'in_app',
             'data': event['data']
         }))
     
@@ -84,7 +102,14 @@ class DashboardConsumer(AsyncWebSocketConsumer):
             'type': 'fire_tracing',
             'data': event['data']
         }))
-    
+
+    async def device_pose_update(self, event):
+        """云台姿态推送（大屏）"""
+        await self.send(text_data=json.dumps({
+            'type': 'pose',
+            'data': event['data']
+        }))
+
     @database_sync_to_async
     def get_user_from_token(self):
         """从 JWT token 获取用户"""
@@ -93,10 +118,10 @@ class DashboardConsumer(AsyncWebSocketConsumer):
             query_string = self.scope.get('query_string', b'').decode()
             params = dict(param.split('=') for param in query_string.split('&') if '=' in param)
             token = params.get('token')
-            
+
             if not token:
                 return AnonymousUser()
-            
+
             # 验证 token
             access_token = AccessToken(token)
             user_id = access_token['user_id']
@@ -105,7 +130,7 @@ class DashboardConsumer(AsyncWebSocketConsumer):
             return AnonymousUser()
 
 
-class DeviceCommandConsumer(AsyncWebSocketConsumer):
+class DeviceCommandConsumer(AsyncWebsocketConsumer):
     """设备指令 WebSocket 消费者"""
     
     async def connect(self):
@@ -160,7 +185,21 @@ class DeviceCommandConsumer(AsyncWebSocketConsumer):
             'type': 'response',
             'data': event['data']
         }))
-    
+
+    async def device_pose_update(self, event):
+        """云台姿态推送"""
+        await self.send(text_data=json.dumps({
+            'type': 'pose',
+            'data': event['data']
+        }))
+
+    async def device_command_status(self, event):
+        """指令状态推送"""
+        await self.send(text_data=json.dumps({
+            'type': 'command_status',
+            'data': event['data']
+        }))
+
     @database_sync_to_async
     def get_user_from_token(self):
         """从 JWT token 获取用户"""
@@ -168,10 +207,10 @@ class DeviceCommandConsumer(AsyncWebSocketConsumer):
             query_string = self.scope.get('query_string', b'').decode()
             params = dict(param.split('=') for param in query_string.split('&') if '=' in param)
             token = params.get('token')
-            
+
             if not token:
                 return AnonymousUser()
-            
+
             access_token = AccessToken(token)
             user_id = access_token['user_id']
             return User.objects.get(id=user_id)

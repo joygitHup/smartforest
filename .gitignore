@@ -12,6 +12,7 @@ __pycache__/
 *.egg-info/
 /.env
 .env
+.smartforest-ports.env
 .cozeproj/reduction
 
 # JS/TS bundlers & build outputs
@@ -163,3 +164,7 @@ Desktop.ini
 # Misc
 .coze-logs
 .codegraph/
+
+# local one-click start logs
+.run-logs/
+

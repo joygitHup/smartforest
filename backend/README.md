@@ -18,6 +18,28 @@
 | 容器编排 | Docker + Kubernetes | 标准化部署与弹性伸缩 |
 | 监控 | Prometheus + Grafana | 全链路可观测性 |
 
+## 依赖说明
+
+完整的前后端依赖分组、中间件端口与排障说明见仓库文档：
+
+- **[docs/dependencies.md](../docs/dependencies.md)**（推荐阅读）
+
+本地安装：
+
+```bash
+cd backend
+python -m venv venv
+# Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+要点：
+
+- WebSocket 使用 PyPI 包 **`channels`** + **`daphne`**（不要装错成不存在的 `django-channels`）
+- TDengine 使用 **`taospy`**；未安装时遥测写入会跳过
+- Redis 需 **≥ 5**（Channels / Celery）
+- Windows Celery 请加 `--pool=solo`
+
 ## 项目结构
 
 ```
@@ -117,6 +139,9 @@ docker-compose down
 
 ### 4. 本地开发
 
+**一键启动（推荐）**：在仓库根目录执行 `start-all.bat`（Windows）或 `./scripts/start-all.sh`（Linux/macOS）。  
+说明见 [`docs/dependencies.md`](../docs/dependencies.md)。
+
 ```bash
 # 初始化数据库
 bash scripts/init_db.sh
@@ -124,11 +149,15 @@ bash scripts/init_db.sh
 # 启动开发服务器
 python manage.py runserver
 
-# 启动 Celery Worker
-celery -A config worker -l info
+# 启动 Celery Worker（Windows 请用 solo 池）
+# Linux/Mac:
+# celery -A config worker -l info
+# Windows:
+python -m celery -A config worker -l info --pool=solo
+# 或双击 scripts/start_celery_worker.bat
 
 # 启动 Celery Beat
-celery -A config beat -l info
+python -m celery -A config beat -l info
 
 # 启动 MQTT 客户端
 python manage.py mqtt_client

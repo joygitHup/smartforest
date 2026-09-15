@@ -13,6 +13,10 @@ export interface Device {
   altitude: string | null;
   region: string;
   forest_zone: string;
+  forest_zone_ref?: number | null;
+  forest_zone_ref_name?: string | null;
+  organization?: number | null;
+  organization_name?: string | null;
   firmware_version: string;
   hardware_version: string;
   manufacturer: string;

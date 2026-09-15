@@ -2,10 +2,28 @@
 
 import { useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAuthenticated } from '@/lib/auth';
+import {
+  getTokens,
+  isAuthenticated,
+  refreshToken,
+  updateAccessToken,
+  clearTokens,
+} from '@/lib/auth';
 
 interface AuthGuardProps {
   children: ReactNode;
+}
+
+function isJwtExpired(token: string): boolean {
+  try {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) return true;
+    const payload = JSON.parse(atob(payloadPart)) as { exp?: number };
+    if (!payload.exp) return true;
+    return Date.now() >= payload.exp * 1000 - 30_000;
+  } catch {
+    return true;
+  }
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
@@ -13,11 +31,45 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated()) {
+    let cancelled = false;
+
+    async function ensureAuth() {
+      if (!isAuthenticated()) {
+        router.replace('/login');
+        return;
+      }
+
+      const { access, refresh } = getTokens();
+
+      // access 仍有效
+      if (access && !isJwtExpired(access)) {
+        if (!cancelled) setAuthorized(true);
+        return;
+      }
+
+      // access 过期，尝试 refresh
+      if (refresh && !isJwtExpired(refresh)) {
+        try {
+          const tokens = await refreshToken(refresh);
+          updateAccessToken(tokens.access, tokens.refresh);
+          if (!cancelled) setAuthorized(true);
+          return;
+        } catch {
+          clearTokens();
+          router.replace('/login');
+          return;
+        }
+      }
+
+      clearTokens();
       router.replace('/login');
-    } else {
-      setAuthorized(true);
     }
+
+    void ensureAuth();
+
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   if (!authorized) {

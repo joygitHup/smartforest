@@ -4,13 +4,17 @@ djangorestframework==3.15.2
 django-cors-headers==4.6.0
 django-filter==24.3
 
-# 实时通信
-django-channels==4.2.0
+# 实时通信（WebSocket）
+# PyPI 包名是 channels（不是 django-channels）
+channels==4.2.0
 channels-redis==4.2.0
+daphne==4.2.0
 
 # 数据库
 psycopg2-binary==2.9.10
-tdengine-connector==3.5.0
+
+# TDengine 原生驱动（遥测写入；未安装时写入会跳过）
+taospy==2.7.21
 
 # 缓存与队列
 redis==5.2.1
@@ -21,7 +25,10 @@ django-celery-results==2.5.1
 # MQTT
 paho-mqtt==2.2.0
 
-# 文件存储
+# Kafka（kafka-python-ng 兼容 Python 3.12+）
+kafka-python-ng==2.2.3
+
+# 文件存储（MinIO / S3）
 django-storages==1.14.4
 boto3==1.35.81
 
@@ -35,6 +42,7 @@ drf-spectacular==0.28.0
 prometheus-client==0.21.1
 django-prometheus==2.3.1
 structlog==24.4.0
+psutil==6.1.1
 
 # 工具
 python-decouple==3.8

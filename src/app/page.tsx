@@ -1,31 +1,32 @@
-// src/app/page.tsx
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authApi } from '@/lib/api/auth';
+import { isAuthenticated } from '@/lib/auth';
 
-export default function HomePage() {
+export default function Home() {
   const router = useRouter();
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    // 检查是否已登录
-    if (authApi.isAuthenticated()) {
-      // 如果已登录，跳转到设备管理页
-      router.replace('/devices');
+    if (isAuthenticated()) {
+      router.replace('/dashboard');
     } else {
-      // 如果未登录，跳转到登录页
       router.replace('/login');
     }
+    setChecked(true);
   }, [router]);
 
-  // 显示加载状态
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a1628]">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3b82f6] mx-auto"></div>
-        <p className="text-[#8b9bb4] text-sm mt-4">加载中...</p>
+  if (!checked) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#0a1628]">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#3b82f6] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#8b9bb4]">正在加载...</p>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 }

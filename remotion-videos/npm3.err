@@ -1,0 +1,18 @@
+npm warn cleanup Failed to remove some directories [
+npm warn cleanup   [
+npm warn cleanup     '\\\\?\\D:\\pythonDev\\smartforest\\remotion-videos\\node_modules\\terser-webpack-plugin',
+npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'D:\pythonDev\smartforest\remotion-videos\node_modules\terser-webpack-plugin\node_modules\ajv\lib\refs'] {
+npm warn cleanup       errno: -4048,
+npm warn cleanup       code: 'EPERM',
+npm warn cleanup       syscall: 'rmdir',
+npm warn cleanup       path: 'D:\\pythonDev\\smartforest\\remotion-videos\\node_modules\\terser-webpack-plugin\\node_modules\\ajv\\lib\\refs'
+npm warn cleanup     }
+npm warn cleanup   ]
+npm warn cleanup ]
+npm error code 1
+npm error path D:\pythonDev\smartforest\remotion-videos\node_modules\esbuild
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c node install.js
+npm error 'node' �����ڲ����ⲿ���Ҳ���ǿ����еĳ���
+npm error ���������ļ���
+npm error A complete log of this run can be found in: C:\Users\lenovo\AppData\Local\npm-cache\_logs\2026-09-04T02_27_02_912Z-debug-0.log

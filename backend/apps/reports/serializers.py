@@ -9,11 +9,15 @@ from apps.devices.models import Device
 
 class DailyReportListSerializer(serializers.ModelSerializer):
     """日报列表序列化器"""
+    organization_name = serializers.CharField(
+        source='organization.name', read_only=True, allow_null=True
+    )
 
     class Meta:
         model = DailyReport
         fields = [
-            'id', 'report_date', 'total_devices', 'online_devices', 'online_rate',
+            'id', 'organization', 'organization_name', 'report_date',
+            'total_devices', 'online_devices', 'online_rate',
             'total_alerts', 'resolved_alerts', 'resolution_rate',
             'avg_response_time', 'false_alarm_count', 'false_alarm_rate',
             'carbon_sequestration', 'created_at'
@@ -118,11 +122,14 @@ class DeviceStatisticsUpdateSerializer(serializers.ModelSerializer):
 
 class EnvironmentalDataListSerializer(serializers.ModelSerializer):
     """环境数据列表序列化器"""
+    organization_name = serializers.CharField(
+        source='organization.name', read_only=True, allow_null=True
+    )
 
     class Meta:
         model = EnvironmentalData
         fields = [
-            'id', 'region', 'stat_date', 'stat_hour',
+            'id', 'organization', 'organization_name', 'region', 'stat_date', 'stat_hour',
             'avg_temperature', 'max_temperature', 'min_temperature',
             'avg_humidity', 'max_humidity', 'min_humidity',
             'avg_wind_speed', 'max_wind_speed',
@@ -145,7 +152,7 @@ class EnvironmentalDataCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = EnvironmentalData
         fields = [
-            'region', 'stat_date', 'stat_hour',
+            'organization', 'region', 'stat_date', 'stat_hour',
             'avg_temperature', 'max_temperature', 'min_temperature',
             'avg_humidity', 'max_humidity', 'min_humidity',
             'avg_wind_speed', 'max_wind_speed',
@@ -154,17 +161,19 @@ class EnvironmentalDataCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """验证数据唯一性"""
+        organization = data.get('organization')
         region = data.get('region')
         stat_date = data.get('stat_date')
         stat_hour = data.get('stat_hour')
 
         if EnvironmentalData.objects.filter(
+                organization=organization,
                 region=region,
                 stat_date=stat_date,
                 stat_hour=stat_hour
         ).exists():
             raise serializers.ValidationError(
-                f'区域 {region} 在 {stat_date} {stat_hour} 时的数据已存在'
+                f'组织区域 {region} 在 {stat_date} {stat_hour} 时的数据已存在'
             )
         return data
 

@@ -6,8 +6,26 @@
 
 ### 启动开发服务器
 
+**一键启动（推荐，Windows）**
+
+```bat
+start-all.bat
+```
+
+会拉起 Docker 中间件、Django、Celery、IoT 管道与前端。详见 [docs/dependencies.md](./docs/dependencies.md)。
+
+停止：
+
+```bat
+scripts\stop-all.bat
+```
+
+**仅前端**
+
 ```bash
 coze dev
+# 或
+pnpm dev
 ```
 
 启动后，在浏览器中打开 [http://localhost:5000](http://localhost:5000) 查看应用。
@@ -338,14 +356,39 @@ export const useStore = create<Store>((set) => ({
 
 ## 技术栈
 
-- **框架**: Next.js 16.1.1 (App Router)
+- **框架**: Next.js 16.1.1 (App Router) + React 19
 - **UI 组件**: shadcn/ui (基于 Radix UI)
 - **样式**: Tailwind CSS v4
+- **地图**: MapLibre GL（指挥中心 GIS / 火情态势图）
+- **图表**: Recharts
 - **表单**: React Hook Form + Zod
 - **图标**: Lucide React
-- **字体**: Geist Sans & Geist Mono
-- **包管理器**: pnpm 9+
+- **包管理器**: pnpm 9+（禁止 npm / yarn）
 - **TypeScript**: 5.x
+- **后端**: Django 5 + DRF（见 `backend/`）
+
+## 依赖说明
+
+前后端依赖分组、安装命令、中间件端口与常见问题：
+
+- **[docs/dependencies.md](./docs/dependencies.md)**
+
+前端安装：
+
+```bash
+pnpm install
+pnpm add <package>      # 业务依赖
+pnpm add -D <package>   # 开发依赖
+```
+
+近期地图相关依赖：
+
+| 包 | 用途 |
+|----|------|
+| `maplibre-gl` | GIS / 火情态势图 |
+| `@types/geojson` | GeoJSON 类型定义 |
+
+后端请进入 `backend/` 后执行 `pip install -r requirements.txt`，详见同上文档与 [`backend/README.md`](./backend/README.md)。
 
 ## 参考文档
 
@@ -361,3 +404,5 @@ export const useStore = create<Store>((set) => ({
 3. **遵循 Next.js App Router 规范**，正确区分服务端/客户端组件
 4. **使用 TypeScript** 进行类型安全开发
 5. **使用 `@/` 路径别名** 导入模块（已配置）
+6. **地图能力统一基于 `maplibre-gl`**，避免再引入第二套地图 SDK
+7. **依赖与中间件说明** 见 [docs/dependencies.md](./docs/dependencies.md)

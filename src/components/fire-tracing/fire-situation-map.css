@@ -1,0 +1,9 @@
+/* 火情态势图补充样式（复用 situational-map 标记） */
+
+.sf-fire-origin .sf-device-marker__meta {
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.sf-fire-origin .sf-device-marker__name {
+  color: #fecaca;
+}

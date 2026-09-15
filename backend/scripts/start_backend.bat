@@ -1,0 +1,6 @@
+@echo off
+cd /d %~dp0\..
+echo Seeding demo data...
+python manage.py seed_demo_data
+echo Starting Django on 127.0.0.1:8000 ...
+python manage.py runserver 127.0.0.1:8000

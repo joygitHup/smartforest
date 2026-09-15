@@ -1,8 +1,7 @@
 # apps/core/__init__.py
 """
-Core app for shared functionality.
+Core app for shared functionality (filters, etc.).
 """
-default_app_config = 'core.apps.CoreConfig'
 from .filters import (
     ASGICompatibleDjangoFilterBackend,
     ASGICompatibleSearchFilter,

@@ -7,28 +7,16 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
+  # 容器内访问宿主机 Django（本地 runserver）
   - job_name: 'django'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+
+  # compose 全栈时用 backend 服务名（与 django job 二选一即可，可并存）
+  - job_name: 'django-compose'
     static_configs:
       - targets: ['backend:8000']
     metrics_path: '/metrics'
-
-  - job_name: 'celery'
-    static_configs:
-      - targets: ['celery_worker:8000']
-    metrics_path: '/metrics'
-
-  - job_name: 'redis'
-    static_configs:
-      - targets: ['redis:6379']
-
-  - job_name: 'postgres'
-    static_configs:
-      - targets: ['postgres:5432']
-
-  - job_name: 'emqx'
-    static_configs:
-      - targets: ['emqx:18083']
-
-  - job_name: 'tdengine'
-    static_configs:
-      - targets: ['tdengine:6046']
+    scrape_interval: 30s

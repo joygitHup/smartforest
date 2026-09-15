@@ -2,6 +2,7 @@
 """
 Device filters for API.
 """
+from django.db.models import Q
 from django_filters import rest_framework as filters
 from .models import Device, DeviceTelemetry, DeviceCommand
 
@@ -15,8 +16,9 @@ class DeviceFilter(filters.FilterSet):
     
     # 模糊搜索
     device_name = filters.CharFilter(field_name='device_name', lookup_expr='icontains')
-    region = filters.CharFilter(field_name='region', lookup_expr='icontains')
-    forest_zone = filters.CharFilter(field_name='forest_zone', lookup_expr='icontains')
+    # 林区 / 片区可同时传入，二者 AND：forest_zone=林区名，region=片区名
+    region = filters.CharFilter(method='filter_area_region')
+    forest_zone = filters.CharFilter(method='filter_forest_zone_name')
     manufacturer = filters.CharFilter(field_name='manufacturer', lookup_expr='icontains')
     
     # 范围过滤
@@ -44,6 +46,33 @@ class DeviceFilter(filters.FilterSet):
             'region', 'forest_zone',
             'battery_level', 'signal_strength',
         ]
+
+    def filter_forest_zone_name(self, queryset, name, value):
+        """按林区名称 / 林区主数据匹配"""
+        zone = (value or '').strip()
+        if not zone:
+            return queryset
+        return queryset.filter(
+            Q(forest_zone__icontains=zone) | Q(forest_zone_ref__name__icontains=zone)
+        )
+
+    def filter_area_region(self, queryset, name, value):
+        """按片区 region 匹配"""
+        area = (value or '').strip()
+        if not area:
+            return queryset
+        return queryset.filter(region__icontains=area)
+
+    def filter_zone_or_region(self, queryset, name, value):
+        """兼容旧调用：林区名或片区"""
+        zone = (value or '').strip()
+        if not zone:
+            return queryset
+        return queryset.filter(
+            Q(forest_zone__icontains=zone)
+            | Q(forest_zone_ref__name__icontains=zone)
+            | Q(region__icontains=zone)
+        )
     
     def filter_is_online(self, queryset, name, value):
         """过滤在线/离线设备"""

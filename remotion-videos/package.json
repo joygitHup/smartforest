@@ -1,0 +1,21 @@
+{
+  "name": "remotion-videos",
+  "version": "1.0.0",
+  "description": "林智森林智能监控平台 产品介绍视频 (90秒/16:9)",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render src/index.ts LinZhiProduct output/linzhi-product-intro.mp4",
+    "preview": "remotion still src/index.ts LinZhiProduct out/thumbnail.png"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@remotion/cli": "4.0.520",
+    "@remotion/google-fonts": "4.0.520",
+    "@remotion/media": "4.0.520",
+    "@remotion/studio-codemods": "4.0.520",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.520"
+  }
+}

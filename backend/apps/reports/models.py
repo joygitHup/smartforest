@@ -7,7 +7,16 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class DailyReport(models.Model):
     """日报"""
-    report_date = models.DateField('报告日期', unique=True, db_index=True)
+    organization = models.ForeignKey(
+        'users.Organization',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='daily_reports',
+        verbose_name='所属组织',
+        db_index=True,
+    )
+    report_date = models.DateField('报告日期', db_index=True)
     
     # 设备统计
     total_devices = models.IntegerField('设备总数', default=0)
@@ -40,6 +49,7 @@ class DailyReport(models.Model):
         verbose_name = '日报'
         verbose_name_plural = verbose_name
         ordering = ['-report_date']
+        unique_together = [['organization', 'report_date']]
 
 
 class DeviceStatistics(models.Model):
@@ -70,7 +80,16 @@ class DeviceStatistics(models.Model):
 
 
 class EnvironmentalData(models.Model):
-    """环境数据汇总"""
+    """环境数据汇总（按组织 + 区域）"""
+    organization = models.ForeignKey(
+        'users.Organization',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='environmental_data',
+        verbose_name='所属组织',
+        db_index=True,
+    )
     region = models.CharField('区域', max_length=128, db_index=True)
     stat_date = models.DateField('统计日期', db_index=True)
     stat_hour = models.IntegerField('统计小时', validators=[MinValueValidator(0), MaxValueValidator(23)], null=True, blank=True)
@@ -101,4 +120,4 @@ class EnvironmentalData(models.Model):
         verbose_name = '环境数据汇总'
         verbose_name_plural = verbose_name
         ordering = ['-stat_date', '-stat_hour']
-        unique_together = ['region', 'stat_date', 'stat_hour']
+        unique_together = ['organization', 'region', 'stat_date', 'stat_hour']

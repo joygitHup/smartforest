@@ -1,0 +1,79 @@
+{
+  "voice": "zh-CN-YunjianNeural",
+  "rate": "-6%",
+  "pitch": "-2Hz",
+  "scenes": [
+    {
+      "idx": 1,
+      "file": "scene_01.mp3",
+      "chars": 31,
+      "bytes": 45792
+    },
+    {
+      "idx": 2,
+      "file": "scene_02.mp3",
+      "chars": 36,
+      "bytes": 53280
+    },
+    {
+      "idx": 3,
+      "file": "scene_03.mp3",
+      "chars": 47,
+      "bytes": 64080
+    },
+    {
+      "idx": 4,
+      "file": "scene_04.mp3",
+      "chars": 34,
+      "bytes": 51984
+    },
+    {
+      "idx": 5,
+      "file": "scene_05.mp3",
+      "chars": 31,
+      "bytes": 48096
+    },
+    {
+      "idx": 6,
+      "file": "scene_06.mp3",
+      "chars": 41,
+      "bytes": 64080
+    },
+    {
+      "idx": 7,
+      "file": "scene_07.mp3",
+      "chars": 28,
+      "bytes": 41040
+    },
+    {
+      "idx": 8,
+      "file": "scene_08.mp3",
+      "chars": 30,
+      "bytes": 47088
+    },
+    {
+      "idx": 9,
+      "file": "scene_09.mp3",
+      "chars": 23,
+      "bytes": 37008
+    },
+    {
+      "idx": 10,
+      "file": "scene_10.mp3",
+      "chars": 27,
+      "bytes": 40752
+    },
+    {
+      "idx": 11,
+      "file": "scene_11.mp3",
+      "chars": 22,
+      "bytes": 37872
+    },
+    {
+      "idx": 12,
+      "file": "scene_12.mp3",
+      "chars": 15,
+      "bytes": 26496
+    }
+  ]
+}

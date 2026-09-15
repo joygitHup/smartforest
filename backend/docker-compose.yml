@@ -194,7 +194,8 @@ services:
     networks:
       - forest_network
 
-  # Kafka
+  # Kafka (KRaft-compatible dual listener for host + docker network)
+  # 若本机已有独立 Kafka 容器，可跳过此服务，只需 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: forest_zookeeper
@@ -216,20 +217,27 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
     ports:
       - "9092:9092"
     networks:
       - forest_network
 
-  # Prometheus
+  # Prometheus（抓取 Django /metrics/）
+  # 本机开发时 targets 需能访问 host 上的 Django：host.docker.internal:8000
   prometheus:
     image: prom/prometheus:latest
     container_name: forest_prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus

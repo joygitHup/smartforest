@@ -28,12 +28,32 @@ class Device(models.Model):
     device_type = models.CharField('设备类型', max_length=32, choices=DeviceType.choices)
     status = models.CharField('设备状态', max_length=32, choices=DeviceStatus.choices, default=DeviceStatus.OFFLINE)
     
+    # 逻辑租户：所属组织（本局及下级可见）
+    organization = models.ForeignKey(
+        'users.Organization',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='devices',
+        verbose_name='所属组织',
+        db_index=True,
+    )
+    forest_zone_ref = models.ForeignKey(
+        'users.ForestZone',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='devices',
+        verbose_name='所属林区',
+        db_index=True,
+    )
+
     # 位置信息
     longitude = models.DecimalField('经度', max_digits=10, decimal_places=6, null=True, blank=True)
     latitude = models.DecimalField('纬度', max_digits=10, decimal_places=6, null=True, blank=True)
     altitude = models.DecimalField('海拔', max_digits=8, decimal_places=2, null=True, blank=True)
     region = models.CharField('所属区域', max_length=128, blank=True)
-    forest_zone = models.CharField('林区', max_length=128, blank=True)
+    forest_zone = models.CharField('林区(冗余名)', max_length=128, blank=True)
     
     # 设备属性
     firmware_version = models.CharField('固件版本', max_length=32, blank=True)
@@ -72,6 +92,10 @@ class Device(models.Model):
             models.Index(fields=['device_type', 'status']),
             models.Index(fields=['region', 'forest_zone']),
             models.Index(fields=['last_online_time']),
+            models.Index(fields=['organization', 'status']),
+            models.Index(fields=['organization', 'forest_zone', 'status']),
+            models.Index(fields=['organization', 'region', 'status']),
+            models.Index(fields=['forest_zone_ref', 'status']),
         ]
     
     def __str__(self):
@@ -132,7 +156,16 @@ class DeviceCommand(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='commands')
     command_type = models.CharField('指令类型', max_length=64)
     command_params = models.JSONField('指令参数', default=dict)
-    
+    correlation_id = models.CharField('关联ID', max_length=64, blank=True, db_index=True)
+    operator = models.ForeignKey(
+        'users.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='device_commands',
+        verbose_name='操作人',
+    )
+
     # 指令状态
     STATUS_CHOICES = [
         ('pending', '待发送'),
@@ -143,20 +176,47 @@ class DeviceCommand(models.Model):
         ('timeout', '超时'),
     ]
     status = models.CharField('指令状态', max_length=32, choices=STATUS_CHOICES, default='pending')
-    
+
     # 执行结果
     result = models.JSONField('执行结果', null=True, blank=True)
     error_message = models.TextField('错误信息', blank=True)
-    
+
     # 时间戳
     sent_at = models.DateTimeField('发送时间', null=True, blank=True)
     delivered_at = models.DateTimeField('送达时间', null=True, blank=True)
     executed_at = models.DateTimeField('执行时间', null=True, blank=True)
     created_at = models.DateTimeField('创建时间', auto_now_add=True)
-    
+
     class Meta:
-        app_label = 'devices'  # ✅ 添加这一行
+        app_label = 'devices'
         db_table = 'device_commands'
         verbose_name = '设备指令'
         verbose_name_plural = verbose_name
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['device', '-created_at']),
+            models.Index(fields=['command_type', '-created_at']),
+            models.Index(fields=['status', '-created_at']),
+        ]
+
+
+class DevicePreset(models.Model):
+    """双目云台预置位"""
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='presets')
+    preset_id = models.PositiveSmallIntegerField('预置位号', validators=[MinValueValidator(1), MaxValueValidator(8)])
+    name = models.CharField('预置位名称', max_length=128)
+    pan_angle = models.DecimalField('水平角度', max_digits=6, decimal_places=2)
+    tilt_angle = models.DecimalField('垂直角度', max_digits=6, decimal_places=2)
+    created_at = models.DateTimeField('创建时间', auto_now_add=True)
+    updated_at = models.DateTimeField('更新时间', auto_now=True)
+
+    class Meta:
+        app_label = 'devices'
+        db_table = 'device_presets'
+        verbose_name = '云台预置位'
+        verbose_name_plural = verbose_name
+        ordering = ['preset_id']
+        unique_together = [('device', 'preset_id')]
+
+    def __str__(self):
+        return f'{self.device.device_id}#{self.preset_id} {self.name}'
