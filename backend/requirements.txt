@@ -13,8 +13,8 @@ daphne==4.2.0
 # 数据库
 psycopg2-binary==2.9.10
 
-# TDengine 原生驱动（遥测写入；未安装时写入会跳过）
-taospy==2.7.21
+# InfluxDB 2.x 客户端（遥测写入；未安装时写入会跳过）
+influxdb-client==1.44.0
 
 # 缓存与队列
 redis==5.2.1

@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django_prometheus',
     
     # Local apps
-    'core',  # MQTT / Kafka / MinIO / TDengine management commands
+    'core',  # MQTT / Kafka / MinIO / InfluxDB management commands
     'apps.core',
     'apps.devices',
     'apps.alerts',
@@ -105,13 +105,12 @@ DATABASES = {
     }
 }
 
-# TDengine Configuration
-TDENGINE_CONFIG = {
-    'HOST': config('TDENGINE_HOST', default='localhost'),
-    'PORT': config('TDENGINE_PORT', default=6030, cast=int),
-    'USER': config('TDENGINE_USER', default='root'),
-    'PASSWORD': config('TDENGINE_PASSWORD', default='Taostaos@123'),
-    'DATABASE': config('TDENGINE_DB', default='forest_monitor'),
+# InfluxDB 2.x Configuration
+INFLUXDB_CONFIG = {
+    'URL': config('INFLUXDB_URL', default='http://localhost:8086'),
+    'TOKEN': config('INFLUXDB_TOKEN', default='forest-influxdb-super-token-2026'),
+    'ORG': config('INFLUXDB_ORG', default='forest'),
+    'BUCKET': config('INFLUXDB_BUCKET', default='forest_monitor'),
 }
 
 # Cache
@@ -212,7 +211,7 @@ ALERT_RULE_DEDUP_SECONDS = config('ALERT_RULE_DEDUP_SECONDS', default=300, cast=
 # Celery 任务路由：遥测 / 告警分流（worker 需监听 telemetry,alerts,default）
 CELERY_TASK_ROUTES = {
     'apps.devices.tasks.process_device_telemetry': {'queue': 'telemetry'},
-    'apps.devices.tasks.flush_tdengine_telemetry_batch': {'queue': 'telemetry'},
+    'apps.devices.tasks.flush_influxdb_telemetry_batch': {'queue': 'telemetry'},
     'apps.devices.tasks.update_device_status': {'queue': 'telemetry'},
     'apps.devices.tasks.dispatch_kafka_message': {'queue': 'telemetry'},
     'apps.alerts.tasks.process_alert': {'queue': 'alerts'},

@@ -237,7 +237,7 @@ def process_device_telemetry(self, device_id, telemetry_data):
     """
     处理设备遥测（快路径）：
     1) PostgreSQL 业务库 + 设备状态
-    2) 异步批量写 TDengine
+    2) 异步批量写 InfluxDB
     3) 异步告警规则评估
 
     入口限流在 MQTT/_forward（及管线入口），此处不再重复 mark，避免双限流丢数。
@@ -307,8 +307,8 @@ def process_device_telemetry(self, device_id, telemetry_data):
         thermal_hotspot_y=data.get('thermal_hotspot_y'),
     )
 
-    # TDengine：异步批量（失败不影响主流程）
-    flush_tdengine_telemetry_batch.delay([{
+    # InfluxDB：异步批量（失败不影响主流程）
+    flush_influxdb_telemetry_batch.delay([{
         'device_id': device.device_id,
         'device_type': device.device_type,
         'region': device.region or '',
@@ -362,17 +362,17 @@ def process_device_telemetry(self, device_id, telemetry_data):
     soft_time_limit=60,
     time_limit=90,
 )
-def flush_tdengine_telemetry_batch(self, rows: list):
-    """批量写 TDengine（可由单条或多条组成）。"""
+def flush_influxdb_telemetry_batch(self, rows: list):
+    """批量写 InfluxDB（可由单条或多条组成）。"""
     if not rows:
         return {'status': 'empty'}
     try:
-        from core.tdengine_client import write_telemetry_batch
+        from core.influxdb_client import write_telemetry_batch
 
         written = write_telemetry_batch(rows)
         return {'status': 'ok', 'written': written, 'requested': len(rows)}
     except Exception as exc:
-        logger.warning('TDengine batch flush failed: %s', exc)
+        logger.warning('InfluxDB batch flush failed: %s', exc)
         raise
 
 

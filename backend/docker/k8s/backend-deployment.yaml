@@ -51,10 +51,17 @@ spec:
           value: "emqx-service"
         - name: MQTT_BROKER_PORT
           value: "1883"
-        - name: TDENGINE_HOST
-          value: "tdengine-service"
-        - name: TDENGINE_PORT
-          value: "6030"
+        - name: INFLUXDB_URL
+          value: "http://influxdb-service:8086"
+        - name: INFLUXDB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: forest-secrets
+              key: influxdb-token
+        - name: INFLUXDB_ORG
+          value: "forest"
+        - name: INFLUXDB_BUCKET
+          value: "forest_monitor"
         resources:
           requests:
             memory: "512Mi"

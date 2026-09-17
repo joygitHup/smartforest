@@ -13,22 +13,21 @@ while ! nc -z ${REDIS_HOST:-localhost} ${REDIS_PORT:-6379}; do
 done
 echo "Redis started"
 
-echo "Waiting for TDengine..."
-while ! nc -z ${TDENGINE_HOST:-localhost} ${TDENGINE_PORT:-6030}; do
+echo "Waiting for InfluxDB..."
+while ! nc -z ${INFLUXDB_HOST:-localhost} ${INFLUXDB_PORT:-8086}; do
   sleep 1
 done
-echo "TDengine started"
+echo "InfluxDB started"
 
 echo "Running migrations..."
 python manage.py migrate --noinput
 
-echo "Creating TDengine database and tables..."
+echo "Initializing InfluxDB bucket (auto-created on first connect)..."
 python manage.py shell -c "
-from core.tdengine_client import get_tdengine_client
-client = get_tdengine_client()
-client.create_database()
-client.create_supertable()
-print('TDengine initialized')
+from core.influxdb_client import get_influxdb_client
+client = get_influxdb_client()
+client.connect()
+print('InfluxDB initialized')
 "
 
 echo "Collecting static files..."

@@ -378,21 +378,21 @@ function AlertsPageContent() {
             type="button"
             disabled={exporting}
             onClick={() => void handleExport()}
-            className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors disabled:opacity-50"
+            className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors disabled:opacity-50"
           >
             {exporting ? '导出中...' : '导出报表'}
           </button>
           <button
             type="button"
             onClick={() => router.push('/alerts/handling')}
-            className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors"
+            className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors"
           >
             处理记录
           </button>
           <button
             type="button"
             onClick={() => router.push('/rules/alert-rules')}
-            className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors"
+            className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors"
           >
             告警规则配置
           </button>
@@ -401,19 +401,19 @@ function AlertsPageContent() {
 
       <div className="grid grid-cols-4 gap-3">
         <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-1">告警总数{stats ? `（${stats.period}）` : ''}</div>
+          <div className="text-sm text-[#8b9bb4] mb-1">告警总数{stats ? `（${stats.period}）` : ''}</div>
           <div className="text-2xl font-bold font-mono text-[#e8f1ff]">{cardStats.total}</div>
         </div>
         <div className="bg-[#152238] border border-[#f59e0b]/30 rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-1">待处理/未关闭</div>
+          <div className="text-sm text-[#8b9bb4] mb-1">待处理/未关闭</div>
           <div className="text-2xl font-bold font-mono text-[#f59e0b]">{cardStats.unresolved}</div>
         </div>
         <div className="bg-[#152238] border border-[#ef4444]/30 rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-1">一级告警(未关闭)</div>
+          <div className="text-sm text-[#8b9bb4] mb-1">一级告警(未关闭)</div>
           <div className="text-2xl font-bold font-mono text-[#ef4444]">{cardStats.level1}</div>
         </div>
         <div className="bg-[#152238] border border-[#f59e0b]/30 rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-1">二级告警(未关闭)</div>
+          <div className="text-sm text-[#8b9bb4] mb-1">二级告警(未关闭)</div>
           <div className="text-2xl font-bold font-mono text-[#f59e0b]">{cardStats.level2}</div>
         </div>
       </div>
@@ -424,7 +424,7 @@ function AlertsPageContent() {
           placeholder="搜索告警ID、设备名称、区域..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] placeholder-[#8b9bb4] focus:outline-none focus:border-[#3b82f6] w-72"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] placeholder-[#8b9bb4] focus:outline-none focus:border-[#3b82f6] w-72"
         />
         <select
           value={levelFilter}
@@ -432,7 +432,7 @@ function AlertsPageContent() {
             setLevelFilter(e.target.value);
             onPageChange(1);
           }}
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
         >
           <option value="all">全部等级</option>
           <option value="1">一级(紧急)</option>
@@ -445,7 +445,7 @@ function AlertsPageContent() {
             setStatusFilter(e.target.value);
             onPageChange(1);
           }}
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
         >
           <option value="all">全部状态</option>
           <option value="new">待处理(新告警)</option>
@@ -456,7 +456,7 @@ function AlertsPageContent() {
           <option value="false_alarm">误报</option>
           <option value="escalated">已升级</option>
         </select>
-        <span className="text-xs text-[#8b9bb4] ml-auto">
+        <span className="text-sm text-[#8b9bb4] ml-auto">
           共 <span className="text-[#e8f1ff] font-mono">{totalCount}</span> 条
         </span>
       </div>
@@ -473,7 +473,7 @@ function AlertsPageContent() {
                 <p className="text-sm text-[#ef4444] mb-2">{error}</p>
                 <button
                   onClick={() => void fetchList()}
-                  className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb]"
+                  className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb]"
                 >
                   重试
                 </button>
@@ -487,14 +487,14 @@ function AlertsPageContent() {
             <table className="w-full">
               <thead className="bg-[#0f1e35] sticky top-0">
                 <tr>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">告警ID</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">等级</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">类型</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">设备/区域</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">AI置信度</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">时间</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">状态</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">操作</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">告警ID</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">等级</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">类型</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">设备/区域</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">AI置信度</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">时间</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">状态</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -510,18 +510,18 @@ function AlertsPageContent() {
                       }`}
                       onClick={() => void openDetail(alert)}
                     >
-                      <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">{alert.alert_id}</td>
+                      <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">{alert.alert_id}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] border ${level.bg} ${level.color}`}>
                           {level.num === 1 && <span className="w-1.5 h-1.5 rounded-full bg-[#ef4444] mr-1 animate-pulse" />}
                           {alert.alert_level_display || level.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-[#e8f1ff]">
+                      <td className="px-4 py-3 text-sm text-[#e8f1ff]">
                         {alert.alert_type_display || alert.alert_type}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="text-xs text-[#e8f1ff]">{alert.device_name || '-'}</div>
+                        <div className="text-sm text-[#e8f1ff]">{alert.device_name || '-'}</div>
                         <div className="text-[10px] text-[#8b9bb4]">
                           {alert.forest_zone || alert.region || '-'}
                         </div>
@@ -529,28 +529,28 @@ function AlertsPageContent() {
                       <td className="px-4 py-3">
                         {conf > 0 ? (
                           <span
-                            className={`text-xs font-mono ${
+                            className={`text-sm font-mono ${
                               conf >= 85 ? 'text-[#ef4444]' : conf >= 70 ? 'text-[#f59e0b]' : 'text-[#8b9bb4]'
                             }`}
                           >
                             {conf}%
                           </span>
                         ) : (
-                          <span className="text-xs text-[#8b9bb4]">--</span>
+                          <span className="text-sm text-[#8b9bb4]">--</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-xs text-[#8b9bb4] font-mono">
+                      <td className="px-4 py-3 text-sm text-[#8b9bb4] font-mono">
                         {formatTime(alert.occurred_at)}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`text-xs ${statusConfig[alert.status]?.color || 'text-[#8b9bb4]'}`}>
+                        <span className={`text-sm ${statusConfig[alert.status]?.color || 'text-[#8b9bb4]'}`}>
                           {alert.status_display || statusConfig[alert.status]?.label || alert.status}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         <button
                           type="button"
-                          className="text-xs text-[#3b82f6] hover:text-[#60a5fa] transition-colors"
+                          className="text-sm text-[#3b82f6] hover:text-[#60a5fa] transition-colors"
                           onClick={(e) => {
                             e.stopPropagation();
                             void openDetail(alert);
@@ -616,7 +616,7 @@ function AlertsPageContent() {
                   <p className="text-sm text-[#ef4444] mb-3">{detailError}</p>
                   <button
                     onClick={() => void openDetail(selectedAlert)}
-                    className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded"
+                    className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded"
                   >
                     重试
                   </button>
@@ -626,7 +626,7 @@ function AlertsPageContent() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                       <div className="text-[10px] text-[#8b9bb4] mb-2">告警信息</div>
-                      <div className="space-y-2 text-xs">
+                      <div className="space-y-2 text-sm">
                         <div className="flex justify-between gap-3">
                           <span className="text-[#8b9bb4]">告警ID</span>
                           <span className="text-[#e8f1ff] font-mono">{selectedAlert.alert_id}</span>
@@ -669,7 +669,7 @@ function AlertsPageContent() {
                     </div>
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                       <div className="text-[10px] text-[#8b9bb4] mb-2">AI分析 / 状态</div>
-                      <div className="space-y-2 text-xs">
+                      <div className="space-y-2 text-sm">
                         <div className="flex justify-between gap-3">
                           <span className="text-[#8b9bb4]">AI置信度</span>
                           <span
@@ -731,7 +731,7 @@ function AlertsPageContent() {
 
                   <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                     <div className="text-[10px] text-[#8b9bb4] mb-2">告警描述</div>
-                    <p className="text-xs text-[#e8f1ff] leading-relaxed">
+                    <p className="text-sm text-[#e8f1ff] leading-relaxed">
                       {displayText(selectedAlert.description) === '-'
                         ? '暂无描述'
                         : selectedAlert.description}
@@ -765,7 +765,7 @@ function AlertsPageContent() {
                   {selectedAlert.fire_tracing && (
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                       <div className="text-[10px] text-[#8b9bb4] mb-2">火情溯源</div>
-                      <div className="space-y-1 text-xs text-[#e8f1ff]">
+                      <div className="space-y-1 text-sm text-[#e8f1ff]">
                         <div>算法：{displayText(selectedAlert.fire_tracing.algorithm)}</div>
                         <div>
                           起火点：{displayText(selectedAlert.fire_tracing.origin_latitude)},{' '}
@@ -789,7 +789,7 @@ function AlertsPageContent() {
                   )}
 
                   {actionMessage && (
-                    <div className="p-3 bg-[#3b82f6]/10 border border-[#3b82f6]/30 rounded text-xs text-[#93c5fd]">
+                    <div className="p-3 bg-[#3b82f6]/10 border border-[#3b82f6]/30 rounded text-sm text-[#93c5fd]">
                       {actionMessage}
                     </div>
                   )}
@@ -799,7 +799,7 @@ function AlertsPageContent() {
                       <button
                         disabled={actionLoading}
                         onClick={() => void openDispatchDialog()}
-                        className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] disabled:opacity-50"
+                        className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] disabled:opacity-50"
                       >
                         派单生成工单
                       </button>
@@ -808,7 +808,7 @@ function AlertsPageContent() {
                       <button
                         disabled={actionLoading}
                         onClick={() => void runAction(() => startProcessingAlert(selectedAlert.id))}
-                        className="px-3 py-1.5 text-xs bg-[#06b6d4] text-white rounded hover:bg-[#0891b2] disabled:opacity-50"
+                        className="px-3 py-1.5 text-sm bg-[#06b6d4] text-white rounded hover:bg-[#0891b2] disabled:opacity-50"
                       >
                         开始处置
                       </button>
@@ -825,7 +825,7 @@ function AlertsPageContent() {
                               })
                             )
                           }
-                          className="px-3 py-1.5 text-xs bg-[#10b981] text-white rounded hover:bg-[#059669] disabled:opacity-50"
+                          className="px-3 py-1.5 text-sm bg-[#10b981] text-white rounded hover:bg-[#059669] disabled:opacity-50"
                         >
                           标记已控制
                         </button>
@@ -839,7 +839,7 @@ function AlertsPageContent() {
                               })
                             )
                           }
-                          className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-50"
+                          className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-50"
                         >
                           上报误报
                         </button>
@@ -849,7 +849,7 @@ function AlertsPageContent() {
                       <button
                         disabled={actionLoading}
                         onClick={() => void runAction(() => escalateAlert(selectedAlert.id))}
-                        className="px-3 py-1.5 text-xs border border-[#ef4444]/40 text-[#ef4444] rounded hover:bg-[#ef4444]/10 disabled:opacity-50"
+                        className="px-3 py-1.5 text-sm border border-[#ef4444]/40 text-[#ef4444] rounded hover:bg-[#ef4444]/10 disabled:opacity-50"
                       >
                         升级告警
                       </button>
@@ -858,7 +858,7 @@ function AlertsPageContent() {
                       <button
                         disabled={actionLoading}
                         onClick={() => void runAction(() => startFireTracing(selectedAlert.id))}
-                        className="px-3 py-1.5 text-xs border border-[#f59e0b]/40 text-[#f59e0b] rounded hover:bg-[#f59e0b]/10 disabled:opacity-50"
+                        className="px-3 py-1.5 text-sm border border-[#f59e0b]/40 text-[#f59e0b] rounded hover:bg-[#f59e0b]/10 disabled:opacity-50"
                       >
                         启动火情溯源
                       </button>
@@ -867,7 +867,7 @@ function AlertsPageContent() {
                       <button
                         disabled={actionLoading}
                         onClick={() => void handleAimAlert()}
-                        className="px-3 py-1.5 text-xs border border-[#06b6d4]/40 text-[#06b6d4] rounded hover:bg-[#06b6d4]/10 disabled:opacity-50"
+                        className="px-3 py-1.5 text-sm border border-[#06b6d4]/40 text-[#06b6d4] rounded hover:bg-[#06b6d4]/10 disabled:opacity-50"
                       >
                         云台对准告警
                       </button>
@@ -877,7 +877,7 @@ function AlertsPageContent() {
                         type="button"
                         disabled={actionLoading}
                         onClick={() => setShowReinforce(true)}
-                        className="px-3 py-1.5 text-xs border border-[#f59e0b]/30 text-[#f59e0b] rounded hover:bg-[#f59e0b]/10 disabled:opacity-50"
+                        className="px-3 py-1.5 text-sm border border-[#f59e0b]/30 text-[#f59e0b] rounded hover:bg-[#f59e0b]/10 disabled:opacity-50"
                       >
                         请求增援
                       </button>
@@ -886,13 +886,13 @@ function AlertsPageContent() {
                       type="button"
                       disabled={actionLoading}
                       onClick={() => void handleNavigate()}
-                      className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-50"
+                      className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-50"
                     >
                       导航至火点
                     </button>
                     <button
                       onClick={() => void loadActions()}
-                      className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] ml-auto"
+                      className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] ml-auto"
                     >
                       查看处置记录
                     </button>
@@ -901,7 +901,7 @@ function AlertsPageContent() {
                   {showDispatch && (
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3 space-y-2">
                       <div className="text-[10px] text-[#8b9bb4]">派单并生成工单</div>
-                      <label className="inline-flex items-center gap-1.5 text-xs text-[#e8f1ff]">
+                      <label className="inline-flex items-center gap-1.5 text-sm text-[#e8f1ff]">
                         <input
                           type="checkbox"
                           checked={dispatchSelf}
@@ -915,13 +915,13 @@ function AlertsPageContent() {
                       {!dispatchSelf && (
                         <>
                           <input
-                            className="w-full bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff]"
+                            className="w-full bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff]"
                             placeholder="搜索用户名/姓名/部门"
                             value={assigneeSearch}
                             onChange={(e) => setAssigneeSearch(e.target.value)}
                           />
                           <select
-                            className="w-full bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff]"
+                            className="w-full bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff]"
                             value={assigneeId === '' ? '' : String(assigneeId)}
                             onChange={(e) =>
                               setAssigneeId(e.target.value ? Number(e.target.value) : '')
@@ -947,7 +947,7 @@ function AlertsPageContent() {
                         </>
                       )}
                       <textarea
-                        className="w-full bg-[#152238] border border-[#1e3a5f] rounded px-3 py-2 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
+                        className="w-full bg-[#152238] border border-[#1e3a5f] rounded px-3 py-2 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
                         rows={2}
                         placeholder="派单说明（可选）"
                         value={dispatchNote}
@@ -958,14 +958,14 @@ function AlertsPageContent() {
                           type="button"
                           disabled={actionLoading}
                           onClick={() => void handleDispatch()}
-                          className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded disabled:opacity-50"
+                          className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded disabled:opacity-50"
                         >
                           确认派单
                         </button>
                         <button
                           type="button"
                           onClick={() => setShowDispatch(false)}
-                          className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded"
+                          className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded"
                         >
                           取消
                         </button>
@@ -983,7 +983,7 @@ function AlertsPageContent() {
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3 space-y-2">
                       <div className="text-[10px] text-[#8b9bb4]">请求增援</div>
                       <textarea
-                        className="w-full bg-[#152238] border border-[#1e3a5f] rounded px-3 py-2 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
+                        className="w-full bg-[#152238] border border-[#1e3a5f] rounded px-3 py-2 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
                         rows={2}
                         placeholder="请说明增援事由..."
                         value={reinforceReason}
@@ -991,7 +991,7 @@ function AlertsPageContent() {
                       />
                       <div className="grid grid-cols-2 gap-2">
                         <input
-                          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff]"
+                          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff]"
                           placeholder="联系方式"
                           value={reinforceContact}
                           onChange={(e) => setReinforceContact(e.target.value)}
@@ -999,7 +999,7 @@ function AlertsPageContent() {
                         <input
                           type="number"
                           min={1}
-                          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff]"
+                          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff]"
                           value={reinforcePeople}
                           onChange={(e) => setReinforcePeople(parseInt(e.target.value, 10) || 1)}
                         />
@@ -1009,14 +1009,14 @@ function AlertsPageContent() {
                           type="button"
                           disabled={actionLoading}
                           onClick={() => void handleReinforce()}
-                          className="px-3 py-1.5 text-xs bg-[#f59e0b] text-white rounded disabled:opacity-50"
+                          className="px-3 py-1.5 text-sm bg-[#f59e0b] text-white rounded disabled:opacity-50"
                         >
                           提交申请
                         </button>
                         <button
                           type="button"
                           onClick={() => setShowReinforce(false)}
-                          className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded"
+                          className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded"
                         >
                           取消
                         </button>
@@ -1028,15 +1028,15 @@ function AlertsPageContent() {
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                       <div className="text-[10px] text-[#8b9bb4] mb-2">处置记录</div>
                       {actionsLoading ? (
-                        <p className="text-xs text-[#8b9bb4]">加载中...</p>
+                        <p className="text-sm text-[#8b9bb4]">加载中...</p>
                       ) : actions.length === 0 ? (
-                        <p className="text-xs text-[#8b9bb4]">暂无处置记录</p>
+                        <p className="text-sm text-[#8b9bb4]">暂无处置记录</p>
                       ) : (
                         <ul className="space-y-2 max-h-48 overflow-auto">
                           {actions.map((a) => (
                             <li
                               key={a.id}
-                              className="text-xs border-b border-[#1e3a5f]/50 pb-2 last:border-0"
+                              className="text-sm border-b border-[#1e3a5f]/50 pb-2 last:border-0"
                             >
                               <div className="flex justify-between gap-2">
                                 <span className="text-[#3b82f6]">{a.action_type}</span>

@@ -197,7 +197,7 @@ function RolesPageContent() {
 
       <div className="flex-1 min-h-0 bg-[#152238] border border-[#1e3a5f] rounded-lg overflow-hidden flex flex-col">
         <div className="overflow-auto flex-1">
-          <table className="w-full text-xs">
+          <table className="w-full text-sm">
             <thead className="sticky top-0 bg-[#0f1e35] text-[#8b9bb4]">
               <tr>
                 <th className="text-left px-3 py-2 font-medium">名称</th>

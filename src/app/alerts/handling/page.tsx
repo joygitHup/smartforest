@@ -162,7 +162,7 @@ function HandlingRecordsContent() {
             {isAdmin ? '暂无处理记录' : '暂无与您相关的处理记录'}
           </div>
         ) : (
-          <table className="w-full text-xs min-w-[900px]">
+          <table className="w-full text-sm min-w-[900px]">
             <thead className="bg-[#0c1a2e] text-[#8b9bb4] sticky top-0">
               <tr>
                 <th className="text-left font-medium px-3 py-2.5">处理时间</th>

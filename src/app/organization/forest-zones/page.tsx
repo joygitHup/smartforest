@@ -207,7 +207,7 @@ function ForestZonesPageContent() {
         <button
           type="button"
           onClick={() => void openCreate()}
-          className="px-3 py-1.5 rounded text-xs bg-[#3b82f6] text-white hover:bg-[#2563eb]"
+          className="px-3 py-1.5 rounded text-sm bg-[#3b82f6] text-white hover:bg-[#2563eb]"
         >
           新建林区
         </button>
@@ -218,12 +218,12 @@ function ForestZonesPageContent() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="搜索名称/编码/责任人"
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] w-56"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] w-56"
         />
         <select
           value={orgFilter}
           onChange={(e) => setOrgFilter(e.target.value)}
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff] min-w-[160px]"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff] min-w-[160px]"
         >
           <option value="">全部组织（含下属）</option>
           {orgOptions.map((o) => (
@@ -235,7 +235,7 @@ function ForestZonesPageContent() {
         <select
           value={activeFilter}
           onChange={(e) => setActiveFilter(e.target.value)}
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff]"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff]"
         >
           <option value="">全部状态</option>
           <option value="1">仅启用</option>
@@ -244,7 +244,7 @@ function ForestZonesPageContent() {
       </div>
 
       {error && (
-        <div className="text-xs text-[#ef4444] bg-[#ef4444]/10 border border-[#ef4444]/30 rounded px-3 py-2">
+        <div className="text-sm text-[#ef4444] bg-[#ef4444]/10 border border-[#ef4444]/30 rounded px-3 py-2">
           {error}
         </div>
       )}
@@ -253,36 +253,36 @@ function ForestZonesPageContent() {
         <table className="w-full">
           <thead className="bg-[#0f1e35] border-b border-[#1e3a5f]">
             <tr>
-              <th className="text-left px-4 py-3 text-xs text-[#8b9bb4]">编码</th>
-              <th className="text-left px-4 py-3 text-xs text-[#8b9bb4]">名称</th>
-              <th className="text-left px-4 py-3 text-xs text-[#8b9bb4]">所属组织</th>
-              <th className="text-left px-4 py-3 text-xs text-[#8b9bb4]">片区</th>
-              <th className="text-left px-4 py-3 text-xs text-[#8b9bb4]">责任人</th>
-              <th className="text-left px-4 py-3 text-xs text-[#8b9bb4]">设备数</th>
-              <th className="text-left px-4 py-3 text-xs text-[#8b9bb4]">状态</th>
-              <th className="text-right px-4 py-3 text-xs text-[#8b9bb4]">操作</th>
+              <th className="text-left px-4 py-3 text-sm text-[#8b9bb4]">编码</th>
+              <th className="text-left px-4 py-3 text-sm text-[#8b9bb4]">名称</th>
+              <th className="text-left px-4 py-3 text-sm text-[#8b9bb4]">所属组织</th>
+              <th className="text-left px-4 py-3 text-sm text-[#8b9bb4]">片区</th>
+              <th className="text-left px-4 py-3 text-sm text-[#8b9bb4]">责任人</th>
+              <th className="text-left px-4 py-3 text-sm text-[#8b9bb4]">设备数</th>
+              <th className="text-left px-4 py-3 text-sm text-[#8b9bb4]">状态</th>
+              <th className="text-right px-4 py-3 text-sm text-[#8b9bb4]">操作</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-xs text-[#8b9bb4]">
+                <td colSpan={8} className="px-4 py-8 text-center text-sm text-[#8b9bb4]">
                   加载中…
                 </td>
               </tr>
             ) : items.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-xs text-[#8b9bb4]">
+                <td colSpan={8} className="px-4 py-8 text-center text-sm text-[#8b9bb4]">
                   暂无林区，请先新建（空组织即为空系统）
                 </td>
               </tr>
             ) : (
               items.map((z) => (
                 <tr key={z.id} className="border-b border-[#1e3a5f]/60 hover:bg-[#0f1e35]/50">
-                  <td className="px-4 py-3 text-xs font-mono text-[#3b82f6]">{z.code}</td>
-                  <td className="px-4 py-3 text-xs text-[#e8f1ff]">{z.name}</td>
-                  <td className="px-4 py-3 text-xs text-[#8b9bb4]">{z.organization_name || '-'}</td>
-                  <td className="px-4 py-3 text-xs text-[#8b9bb4]">
+                  <td className="px-4 py-3 text-sm font-mono text-[#3b82f6]">{z.code}</td>
+                  <td className="px-4 py-3 text-sm text-[#e8f1ff]">{z.name}</td>
+                  <td className="px-4 py-3 text-sm text-[#8b9bb4]">{z.organization_name || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-[#8b9bb4]">
                     {(z.regions && z.regions.length > 0
                       ? z.regions
                       : z.region
@@ -290,14 +290,14 @@ function ForestZonesPageContent() {
                         : []
                     ).join('、') || '-'}
                   </td>
-                  <td className="px-4 py-3 text-xs text-[#8b9bb4]">{z.manager || '-'}</td>
-                  <td className="px-4 py-3 text-xs font-mono text-[#e8f1ff]">{z.device_count ?? 0}</td>
-                  <td className="px-4 py-3 text-xs">
+                  <td className="px-4 py-3 text-sm text-[#8b9bb4]">{z.manager || '-'}</td>
+                  <td className="px-4 py-3 text-sm font-mono text-[#e8f1ff]">{z.device_count ?? 0}</td>
+                  <td className="px-4 py-3 text-sm">
                     <span className={z.is_active ? 'text-[#10b981]' : 'text-[#8b9bb4]'}>
                       {z.is_active ? '启用' : '停用'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right text-xs space-x-2">
+                  <td className="px-4 py-3 text-right text-sm space-x-2">
                     <button
                       type="button"
                       onClick={() => void openEdit(z)}
@@ -343,7 +343,7 @@ function ForestZonesPageContent() {
                 <input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff]"
+                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff]"
                 />
               </div>
               <div>
@@ -351,7 +351,7 @@ function ForestZonesPageContent() {
                 <input
                   value={form.code}
                   onChange={(e) => setForm({ ...form, code: e.target.value })}
-                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff] font-mono"
+                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff] font-mono"
                   placeholder="LZ-A-01"
                 />
               </div>
@@ -365,7 +365,7 @@ function ForestZonesPageContent() {
                       organization: e.target.value ? Number(e.target.value) : null,
                     })
                   }
-                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff]"
+                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff]"
                 >
                   <option value="">默认当前用户组织</option>
                   {orgOptions.map((o) => (
@@ -411,12 +411,12 @@ function ForestZonesPageContent() {
                       }
                     }}
                     placeholder="输入片区名后回车或点击添加"
-                    className="flex-1 bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff]"
+                    className="flex-1 bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff]"
                   />
                   <button
                     type="button"
                     onClick={addRegionTag}
-                    className="px-3 py-1.5 rounded text-xs border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6]"
+                    className="px-3 py-1.5 rounded text-sm border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6]"
                   >
                     添加
                   </button>
@@ -427,7 +427,7 @@ function ForestZonesPageContent() {
                 <input
                   value={form.manager || ''}
                   onChange={(e) => setForm({ ...form, manager: e.target.value })}
-                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff]"
+                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff]"
                 />
               </div>
               <div>
@@ -435,7 +435,7 @@ function ForestZonesPageContent() {
                 <input
                   value={form.contact || ''}
                   onChange={(e) => setForm({ ...form, contact: e.target.value })}
-                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff]"
+                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff]"
                 />
               </div>
               <div>
@@ -444,7 +444,7 @@ function ForestZonesPageContent() {
                   type="number"
                   value={form.sort_order ?? 0}
                   onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) || 0 })}
-                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff]"
+                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff]"
                 />
               </div>
               <div className="col-span-2">
@@ -453,7 +453,7 @@ function ForestZonesPageContent() {
                   value={form.description || ''}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   rows={2}
-                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-xs text-[#e8f1ff]"
+                  className="w-full bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1.5 text-sm text-[#e8f1ff]"
                 />
               </div>
               <div className="col-span-2 flex items-center gap-2">
@@ -463,17 +463,17 @@ function ForestZonesPageContent() {
                   checked={form.is_active !== false}
                   onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
                 />
-                <label htmlFor="fz-active" className="text-xs text-[#e8f1ff]">
+                <label htmlFor="fz-active" className="text-sm text-[#e8f1ff]">
                   启用（停用后不可再挂新设备）
                 </label>
               </div>
             </div>
-            {formError && <p className="text-xs text-[#ef4444] mt-3">{formError}</p>}
+            {formError && <p className="text-sm text-[#ef4444] mt-3">{formError}</p>}
             <div className="flex justify-end gap-2 mt-4">
               <button
                 type="button"
                 onClick={() => setDialogOpen(false)}
-                className="px-3 py-1.5 rounded text-xs border border-[#1e3a5f] text-[#8b9bb4]"
+                className="px-3 py-1.5 rounded text-sm border border-[#1e3a5f] text-[#8b9bb4]"
               >
                 取消
               </button>
@@ -481,7 +481,7 @@ function ForestZonesPageContent() {
                 type="button"
                 disabled={saving}
                 onClick={() => void handleSave()}
-                className="px-3 py-1.5 rounded text-xs bg-[#3b82f6] text-white disabled:opacity-50"
+                className="px-3 py-1.5 rounded text-sm bg-[#3b82f6] text-white disabled:opacity-50"
               >
                 {saving ? '保存中…' : '保存'}
               </button>

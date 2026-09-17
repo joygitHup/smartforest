@@ -106,13 +106,13 @@ if "%DO_DOCKER%"=="1" (
     pushd "%BACKEND%"
     docker compose version >nul 2>&1
     if not errorlevel 1 (
-      docker compose up -d postgres redis emqx tdengine minio rabbitmq zookeeper kafka
+      docker compose up -d postgres redis emqx influxdb minio rabbitmq zookeeper kafka
     ) else (
-      docker-compose up -d postgres redis emqx tdengine minio rabbitmq zookeeper kafka 2>nul
+      docker-compose up -d postgres redis emqx influxdb minio rabbitmq zookeeper kafka 2>nul
     )
     popd
-    call :wait_port 127.0.0.1 5432 45
-    call :wait_port 127.0.0.1 6379 30
+    call :wait_port 127.0.0.1 5433 45
+    call :wait_port 127.0.0.1 6380 30
   )
 ) else (
   echo [1/5] skip docker
@@ -321,7 +321,11 @@ tasklist /V /FI "IMAGENAME eq powershell.exe" 2>nul | findstr /I "%~1" >nul 2>&1
 exit /b %ERRORLEVEL%
 
 :check_celery
-powershell -NoProfile -Command "$procs=Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -and ($_.CommandLine -match 'celery') -and ($_.CommandLine -match 'config') }; if($procs){ exit 0 } else { exit 1 }" >nul 2>&1
+REM Match only the smartforest Celery worker (not beat, not other projects,
+REM not this powershell command itself). Restrict to python.exe processes whose
+REM cmdline contains "-A config worker" (smartforest's settings module + worker
+REM subcommand). Beat uses "-A config beat", other projects use different -A.
+powershell -NoProfile -Command "$procs=Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq 'python.exe' -and $_.CommandLine -and ($_.CommandLine -match '-A\s+config\s+worker') }; if($procs){ exit 0 } else { exit 1 }" >nul 2>&1
 exit /b %ERRORLEVEL%
 
 :stop_frontend_conflict

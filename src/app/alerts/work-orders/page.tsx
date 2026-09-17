@@ -214,7 +214,7 @@ function WorkOrdersContent() {
                 <div className="w-10 h-10 border-4 border-[#3b82f6] border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
-              <table className="w-full text-xs min-w-[760px]">
+              <table className="w-full text-sm min-w-[760px]">
                 <thead className="bg-[#0f1e35] text-[#8b9bb4] sticky top-0">
                   <tr>
                     <th className="text-left font-medium px-4 py-3">工单号</th>

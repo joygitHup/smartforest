@@ -231,12 +231,12 @@ function ReportsPageContent() {
             type="date"
             value={reportDate}
             onChange={(e) => setReportDate(e.target.value)}
-            className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
+            className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
           />
           <select
             value={reportDate}
             onChange={(e) => setReportDate(e.target.value)}
-            className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6] max-w-[160px]"
+            className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6] max-w-[160px]"
           >
             {dateOptions.map((d) => (
               <option key={d} value={d}>
@@ -248,7 +248,7 @@ function ReportsPageContent() {
             type="button"
             disabled={busy}
             onClick={() => void handleGenerate()}
-            className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-50"
+            className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-50"
           >
             {busy ? '处理中…' : '生成报表'}
           </button>
@@ -256,7 +256,7 @@ function ReportsPageContent() {
             type="button"
             disabled={busy || !daily}
             onClick={() => void handleExport()}
-            className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors disabled:opacity-50"
+            className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors disabled:opacity-50"
           >
             导出 CSV
           </button>
@@ -275,7 +275,7 @@ function ReportsPageContent() {
             key={tab.key}
             type="button"
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-1.5 text-xs rounded transition-colors ${
+            className={`px-4 py-1.5 text-sm rounded transition-colors ${
               activeTab === tab.key
                 ? 'bg-[#3b82f6] text-white'
                 : 'text-[#8b9bb4] hover:text-[#e8f1ff]'
@@ -327,11 +327,11 @@ function DailyReportPanel({
   analysis: AlertAnalysis | null;
 }) {
   if (loading) {
-    return <div className="text-xs text-[#8b9bb4] py-8 text-center">加载日报…</div>;
+    return <div className="text-sm text-[#8b9bb4] py-8 text-center">加载日报…</div>;
   }
   if (!daily) {
     return (
-      <div className="text-xs text-[#8b9bb4] py-8 text-center">
+      <div className="text-sm text-[#8b9bb4] py-8 text-center">
         暂无该日日报数据，请点击右上角「生成报表」
       </div>
     );
@@ -368,27 +368,27 @@ function DailyReportPanel({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-3">告警类型分布</div>
+          <div className="text-sm text-[#8b9bb4] mb-3">告警类型分布</div>
           <div className="space-y-2">
             {(analysis?.by_type || []).length === 0 && (
               <div className="text-[11px] text-[#8b9bb4]">当日无告警</div>
             )}
             {(analysis?.by_type || []).slice(0, 6).map((item, idx) => (
               <div key={item.alert_type} className="flex items-center gap-3">
-                <span className="text-xs text-[#8b9bb4] w-16 truncate">{item.label}</span>
+                <span className="text-sm text-[#8b9bb4] w-16 truncate">{item.label}</span>
                 <div className="flex-1 h-2 bg-[#0f1e35] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${TYPE_COLORS[idx % TYPE_COLORS.length]}`}
                     style={{ width: `${item.pct}%` }}
                   />
                 </div>
-                <span className="text-xs text-[#e8f1ff] font-mono w-8 text-right">{item.count}</span>
+                <span className="text-sm text-[#e8f1ff] font-mono w-8 text-right">{item.count}</span>
               </div>
             ))}
           </div>
         </div>
         <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-3">林区告警排名</div>
+          <div className="text-sm text-[#8b9bb4] mb-3">林区告警排名</div>
           <div className="space-y-2">
             {(analysis?.by_zone || []).length === 0 && (
               <div className="text-[11px] text-[#8b9bb4]">暂无林区数据</div>
@@ -396,13 +396,13 @@ function DailyReportPanel({
             {(analysis?.by_zone || []).map((item, idx) => (
               <div key={item.forest_zone} className="flex items-center gap-3">
                 <span
-                  className={`text-xs font-mono w-4 ${idx < 2 ? 'text-[#ef4444]' : 'text-[#8b9bb4]'}`}
+                  className={`text-sm font-mono w-4 ${idx < 2 ? 'text-[#ef4444]' : 'text-[#8b9bb4]'}`}
                 >
                   {idx + 1}
                 </span>
-                <span className="text-xs text-[#e8f1ff] flex-1 truncate">{item.forest_zone}</span>
+                <span className="text-sm text-[#e8f1ff] flex-1 truncate">{item.forest_zone}</span>
                 <span
-                  className={`text-xs font-mono ${
+                  className={`text-sm font-mono ${
                     item.level === 'high'
                       ? 'text-[#ef4444]'
                       : item.level === 'medium'
@@ -472,7 +472,7 @@ function DeviceReportPanel({
       </div>
 
       <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-        <div className="text-xs text-[#8b9bb4] mb-3">设备类型分布</div>
+        <div className="text-sm text-[#8b9bb4] mb-3">设备类型分布</div>
         {loading && <div className="text-[11px] text-[#8b9bb4]">加载中…</div>}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {(summary?.type_distribution || []).map((item, idx) => {
@@ -480,7 +480,7 @@ function DeviceReportPanel({
             const rate = item.count ? (item.online / item.count) * 100 : 0;
             return (
               <div key={item.device_type} className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
-                <div className="text-xs text-[#8b9bb4] mb-2">{item.label}</div>
+                <div className="text-sm text-[#8b9bb4] mb-2">{item.label}</div>
                 <div className="text-xl font-bold font-mono" style={{ color }}>
                   {item.count}
                 </div>
@@ -498,44 +498,44 @@ function DeviceReportPanel({
       </div>
 
       <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg overflow-hidden">
-        <div className="px-4 py-2 border-b border-[#1e3a5f] text-xs text-[#8b9bb4]">
+        <div className="px-4 py-2 border-b border-[#1e3a5f] text-sm text-[#8b9bb4]">
           当日设备明细
         </div>
         <div className="overflow-auto">
           <table className="w-full">
             <thead className="bg-[#0f1e35]">
               <tr>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">设备</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">可用率</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">在线时长</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">告警</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">故障</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">完整率</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">设备</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">可用率</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">在线时长</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">告警</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">故障</th>
+                <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">完整率</th>
               </tr>
             </thead>
             <tbody>
               {rows.length === 0 && !loading && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-xs text-[#8b9bb4]">
+                  <td colSpan={6} className="px-4 py-6 text-center text-sm text-[#8b9bb4]">
                     暂无明细，请先生成报表
                   </td>
                 </tr>
               )}
               {rows.map((row) => (
                 <tr key={row.id} className="border-t border-[#1e3a5f]/50">
-                  <td className="px-4 py-3 text-xs text-[#e8f1ff]">
+                  <td className="px-4 py-3 text-sm text-[#e8f1ff]">
                     <div>{row.device_name}</div>
                     <div className="text-[10px] text-[#8b9bb4] font-mono">{row.device_id}</div>
                   </td>
-                  <td className="px-4 py-3 text-xs text-[#10b981] font-mono">
+                  <td className="px-4 py-3 text-sm text-[#10b981] font-mono">
                     {num(row.availability_rate, 1)}%
                   </td>
-                  <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">
+                  <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">
                     {num(row.uptime_hours, 1)}h
                   </td>
-                  <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">{row.alert_count}</td>
-                  <td className="px-4 py-3 text-xs text-[#ef4444] font-mono">{row.fault_count}</td>
-                  <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">
+                  <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">{row.alert_count}</td>
+                  <td className="px-4 py-3 text-sm text-[#ef4444] font-mono">{row.fault_count}</td>
+                  <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">
                     {num(row.data_completeness, 1)}%
                   </td>
                 </tr>
@@ -573,12 +573,12 @@ function AlertReportPanel({
   const topDevices = analysis?.top_devices || [];
 
   if (loading) {
-    return <div className="text-xs text-[#8b9bb4] py-8 text-center">加载告警分析…</div>;
+    return <div className="text-sm text-[#8b9bb4] py-8 text-center">加载告警分析…</div>;
   }
 
   if (!analysis || analysis.total === 0) {
     return (
-      <div className="text-xs text-[#8b9bb4] py-12 text-center space-y-2">
+      <div className="text-sm text-[#8b9bb4] py-12 text-center space-y-2">
         <div>当日暂无告警数据</div>
         <div className="text-[10px]">
           数据来源：告警表 Alert（规则引擎 / MQTT 告警入库），切换日期或产生告警后刷新
@@ -623,7 +623,7 @@ function AlertReportPanel({
 
       <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
         <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
-          <div className="text-xs text-[#8b9bb4]">当日告警小时趋势</div>
+          <div className="text-sm text-[#8b9bb4]">当日告警小时趋势</div>
           <div className="text-[10px] text-[#8b9bb4] font-mono">
             峰值 {hourlyMax} 次/时 · 合计 {hourly.reduce((a, b) => a + b, 0)} 次
           </div>
@@ -655,33 +655,33 @@ function AlertReportPanel({
       </div>
 
       <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg overflow-hidden">
-        <div className="px-4 py-3 text-xs text-[#8b9bb4] border-b border-[#1e3a5f]/50">
+        <div className="px-4 py-3 text-sm text-[#8b9bb4] border-b border-[#1e3a5f]/50">
           告警等级分析
         </div>
         <table className="w-full">
           <thead className="bg-[#0f1e35]">
             <tr>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">告警等级</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">总数</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">未闭环</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">已处理</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">误报</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">处理率</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">平均响应</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">告警等级</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">总数</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">未闭环</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">已处理</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">误报</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">处理率</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">平均响应</th>
             </tr>
           </thead>
           <tbody>
             {(analysis.by_level || []).map((stat) => (
               <tr key={stat.level} className="border-t border-[#1e3a5f]/50">
-                <td className="px-4 py-3 text-xs text-[#e8f1ff]">{stat.label}</td>
-                <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">{stat.total}</td>
-                <td className="px-4 py-3 text-xs text-[#f59e0b] font-mono">{stat.open ?? 0}</td>
-                <td className="px-4 py-3 text-xs text-[#10b981] font-mono">{stat.resolved}</td>
-                <td className="px-4 py-3 text-xs text-[#8b9bb4] font-mono">{stat.false_alarm ?? 0}</td>
-                <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">
+                <td className="px-4 py-3 text-sm text-[#e8f1ff]">{stat.label}</td>
+                <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">{stat.total}</td>
+                <td className="px-4 py-3 text-sm text-[#f59e0b] font-mono">{stat.open ?? 0}</td>
+                <td className="px-4 py-3 text-sm text-[#10b981] font-mono">{stat.resolved}</td>
+                <td className="px-4 py-3 text-sm text-[#8b9bb4] font-mono">{stat.false_alarm ?? 0}</td>
+                <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">
                   {num(stat.resolution_rate, 1)}%
                 </td>
-                <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">
+                <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">
                   {formatResponseTime(stat.avg_response_seconds)}
                 </td>
               </tr>
@@ -692,19 +692,19 @@ function AlertReportPanel({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-3">告警类型分布</div>
+          <div className="text-sm text-[#8b9bb4] mb-3">告警类型分布</div>
           <div className="space-y-2">
             {byType.length === 0 && <div className="text-[11px] text-[#8b9bb4]">暂无类型数据</div>}
             {byType.map((item, idx) => (
               <div key={item.alert_type} className="flex items-center gap-3">
-                <span className="text-xs text-[#8b9bb4] w-16 truncate">{item.label}</span>
+                <span className="text-sm text-[#8b9bb4] w-16 truncate">{item.label}</span>
                 <div className="flex-1 h-2 bg-[#0f1e35] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${TYPE_COLORS[idx % TYPE_COLORS.length]}`}
                     style={{ width: `${item.pct}%` }}
                   />
                 </div>
-                <span className="text-xs text-[#e8f1ff] font-mono w-12 text-right">
+                <span className="text-sm text-[#e8f1ff] font-mono w-12 text-right">
                   {item.count}
                 </span>
                 <span className="text-[10px] text-[#8b9bb4] font-mono w-10 text-right">
@@ -716,19 +716,19 @@ function AlertReportPanel({
         </div>
 
         <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-3">告警状态分布</div>
+          <div className="text-sm text-[#8b9bb4] mb-3">告警状态分布</div>
           <div className="space-y-2">
             {byStatus.length === 0 && <div className="text-[11px] text-[#8b9bb4]">暂无状态数据</div>}
             {byStatus.map((item, idx) => (
               <div key={item.status} className="flex items-center gap-3">
-                <span className="text-xs text-[#8b9bb4] w-16 truncate">{item.label}</span>
+                <span className="text-sm text-[#8b9bb4] w-16 truncate">{item.label}</span>
                 <div className="flex-1 h-2 bg-[#0f1e35] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${TYPE_COLORS[idx % TYPE_COLORS.length]}`}
                     style={{ width: `${item.pct}%` }}
                   />
                 </div>
-                <span className="text-xs text-[#e8f1ff] font-mono w-12 text-right">
+                <span className="text-sm text-[#e8f1ff] font-mono w-12 text-right">
                   {item.count}
                 </span>
                 <span className="text-[10px] text-[#8b9bb4] font-mono w-10 text-right">
@@ -742,19 +742,19 @@ function AlertReportPanel({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-3">林区告警排名</div>
+          <div className="text-sm text-[#8b9bb4] mb-3">林区告警排名</div>
           <div className="space-y-2">
             {byZone.length === 0 && <div className="text-[11px] text-[#8b9bb4]">暂无林区数据</div>}
             {byZone.map((item, idx) => (
               <div key={item.forest_zone} className="flex items-center gap-3">
                 <span
-                  className={`text-xs font-mono w-4 ${idx < 2 ? 'text-[#ef4444]' : 'text-[#8b9bb4]'}`}
+                  className={`text-sm font-mono w-4 ${idx < 2 ? 'text-[#ef4444]' : 'text-[#8b9bb4]'}`}
                 >
                   {idx + 1}
                 </span>
-                <span className="text-xs text-[#e8f1ff] flex-1 truncate">{item.forest_zone}</span>
+                <span className="text-sm text-[#e8f1ff] flex-1 truncate">{item.forest_zone}</span>
                 <span
-                  className={`text-xs font-mono ${
+                  className={`text-sm font-mono ${
                     item.level === 'high'
                       ? 'text-[#ef4444]'
                       : item.level === 'medium'
@@ -770,19 +770,19 @@ function AlertReportPanel({
         </div>
 
         <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-          <div className="text-xs text-[#8b9bb4] mb-3">区域告警排名</div>
+          <div className="text-sm text-[#8b9bb4] mb-3">区域告警排名</div>
           <div className="space-y-2">
             {byRegion.length === 0 && <div className="text-[11px] text-[#8b9bb4]">暂无区域数据</div>}
             {byRegion.map((item, idx) => (
               <div key={item.region} className="flex items-center gap-3">
                 <span
-                  className={`text-xs font-mono w-4 ${idx < 2 ? 'text-[#ef4444]' : 'text-[#8b9bb4]'}`}
+                  className={`text-sm font-mono w-4 ${idx < 2 ? 'text-[#ef4444]' : 'text-[#8b9bb4]'}`}
                 >
                   {idx + 1}
                 </span>
-                <span className="text-xs text-[#e8f1ff] flex-1 truncate">{item.region}</span>
+                <span className="text-sm text-[#e8f1ff] flex-1 truncate">{item.region}</span>
                 <span
-                  className={`text-xs font-mono ${
+                  className={`text-sm font-mono ${
                     item.level === 'high'
                       ? 'text-[#ef4444]'
                       : item.level === 'medium'
@@ -799,32 +799,32 @@ function AlertReportPanel({
       </div>
 
       <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg overflow-hidden">
-        <div className="px-4 py-3 text-xs text-[#8b9bb4] border-b border-[#1e3a5f]/50">
+        <div className="px-4 py-3 text-sm text-[#8b9bb4] border-b border-[#1e3a5f]/50">
           告警设备 TOP
         </div>
         <table className="w-full">
           <thead className="bg-[#0f1e35]">
             <tr>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">#</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">设备 ID</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">设备名称</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">告警数</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">#</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">设备 ID</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">设备名称</th>
+              <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">告警数</th>
             </tr>
           </thead>
           <tbody>
             {topDevices.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-xs text-[#8b9bb4]">
+                <td colSpan={4} className="px-4 py-6 text-center text-sm text-[#8b9bb4]">
                   暂无关联设备告警
                 </td>
               </tr>
             )}
             {topDevices.map((row, idx) => (
               <tr key={`${row.device_id}-${idx}`} className="border-t border-[#1e3a5f]/50">
-                <td className="px-4 py-3 text-xs text-[#8b9bb4] font-mono">{idx + 1}</td>
-                <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">{row.device_id}</td>
-                <td className="px-4 py-3 text-xs text-[#e8f1ff]">{row.device_name}</td>
-                <td className="px-4 py-3 text-xs text-[#ef4444] font-mono">{row.count}</td>
+                <td className="px-4 py-3 text-sm text-[#8b9bb4] font-mono">{idx + 1}</td>
+                <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">{row.device_id}</td>
+                <td className="px-4 py-3 text-sm text-[#e8f1ff]">{row.device_name}</td>
+                <td className="px-4 py-3 text-sm text-[#ef4444] font-mono">{row.count}</td>
               </tr>
             ))}
           </tbody>
@@ -852,12 +852,12 @@ function EnvironmentReportPanel({
   const tempSpan = Math.max(1, tempMax - tempMin);
 
   if (loading) {
-    return <div className="text-xs text-[#8b9bb4] py-8 text-center">加载环境数据…</div>;
+    return <div className="text-sm text-[#8b9bb4] py-8 text-center">加载环境数据…</div>;
   }
 
   if (!summary || summary.record_count === 0) {
     return (
-      <div className="text-xs text-[#8b9bb4] py-12 text-center space-y-2">
+      <div className="text-sm text-[#8b9bb4] py-12 text-center space-y-2">
         <div>当日暂无环境汇总</div>
         <div className="text-[10px]">
           数据来源：设备遥测 DeviceTelemetry（MQTT/Kafka 入库）→ 点击上方「生成报表」汇总
@@ -944,7 +944,7 @@ function EnvironmentReportPanel({
 
       <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
         <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
-          <div className="text-xs text-[#8b9bb4]">温湿度变化（按小时）</div>
+          <div className="text-sm text-[#8b9bb4]">温湿度变化（按小时）</div>
           <div className="flex items-center gap-3 text-[10px] text-[#8b9bb4]">
             <span className="inline-flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-sm bg-[#f59e0b]/80" />
@@ -989,14 +989,14 @@ function EnvironmentReportPanel({
       </div>
 
       <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#1e3a5f] text-xs text-[#8b9bb4]">
+        <div className="px-4 py-3 border-b border-[#1e3a5f] text-sm text-[#8b9bb4]">
           分林区环境汇总
         </div>
         {regions.length === 0 ? (
-          <div className="text-xs text-[#8b9bb4] py-8 text-center">暂无分区数据</div>
+          <div className="text-sm text-[#8b9bb4] py-8 text-center">暂无分区数据</div>
         ) : (
           <div className="overflow-auto">
-            <table className="w-full text-xs min-w-[720px]">
+            <table className="w-full text-sm min-w-[720px]">
               <thead className="bg-[#0c1a2e] text-[#8b9bb4]">
                 <tr>
                   <th className="text-left font-medium px-4 py-2.5">林区</th>
@@ -1061,7 +1061,7 @@ function KpiCard({
 }) {
   return (
     <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-      <div className="text-xs text-[#8b9bb4] mb-1">{label}</div>
+      <div className="text-sm text-[#8b9bb4] mb-1">{label}</div>
       <div className={`text-2xl font-bold font-mono ${color}`}>{value}</div>
       {sub && <div className="text-[10px] text-[#8b9bb4] mt-1">{sub}</div>}
     </div>

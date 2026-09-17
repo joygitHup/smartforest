@@ -137,16 +137,16 @@ export default function Pagination({
       className={`flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-[#0f1e35] border border-[#1e3a5f] rounded-lg ${className}`.trim()}
     >
       <div className="flex items-center gap-3">
-        <span className="text-xs text-[#8b9bb4] font-mono">
+        <span className="text-sm text-[#8b9bb4] font-mono">
           共 <span className="text-[#e8f1ff]">{total}</span> 条
         </span>
         {onPageSizeChange && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#8b9bb4]">每页</span>
+            <span className="text-sm text-[#8b9bb4]">每页</span>
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="bg-[#152238] border border-[#1e3a5f] rounded px-2 py-1 text-xs text-[#e8f1ff] font-mono focus:outline-none focus:border-[#3b82f6]"
+              className="bg-[#152238] border border-[#1e3a5f] rounded px-2.5 py-1.5 text-sm text-[#e8f1ff] font-mono focus:outline-none focus:border-[#3b82f6]"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -154,7 +154,7 @@ export default function Pagination({
                 </option>
               ))}
             </select>
-            <span className="text-xs text-[#8b9bb4]">条</span>
+            <span className="text-sm text-[#8b9bb4]">条</span>
           </div>
         )}
       </div>
@@ -164,14 +164,14 @@ export default function Pagination({
           type="button"
           onClick={() => onPageChange(Math.max(1, safeCurrent - 1))}
           disabled={safeCurrent === 1}
-          className="px-2 py-1 text-xs rounded border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="px-2.5 py-1.5 text-sm rounded border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           上一页
         </button>
 
         {getVisiblePages().map((page, idx) =>
           typeof page === 'string' ? (
-            <span key={`ellipsis-${idx}`} className="px-2 text-xs text-[#8b9bb4]">
+            <span key={`ellipsis-${idx}`} className="px-2 text-sm text-[#8b9bb4]">
               ...
             </span>
           ) : (
@@ -179,7 +179,7 @@ export default function Pagination({
               type="button"
               key={page}
               onClick={() => onPageChange(page)}
-              className={`px-2.5 py-1 text-xs rounded font-mono transition-colors ${
+              className={`px-2.5 py-1.5 text-sm rounded font-mono transition-colors ${
                 page === safeCurrent
                   ? 'bg-[#3b82f6] text-white border border-[#3b82f6]'
                   : 'border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6]'
@@ -194,12 +194,12 @@ export default function Pagination({
           type="button"
           onClick={() => onPageChange(Math.min(totalPages, safeCurrent + 1))}
           disabled={safeCurrent === totalPages}
-          className="px-2 py-1 text-xs rounded border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="px-2.5 py-1.5 text-sm rounded border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           下一页
         </button>
 
-        <span className="ml-2 text-xs text-[#8b9bb4] font-mono">
+        <span className="ml-2 text-sm text-[#8b9bb4] font-mono">
           第 <span className="text-[#e8f1ff]">{safeCurrent}</span> / {totalPages} 页
         </span>
       </div>

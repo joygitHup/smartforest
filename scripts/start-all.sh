@@ -106,13 +106,13 @@ if [[ "$DO_DOCKER" == "1" ]]; then
   if command -v docker >/dev/null 2>&1; then
     pushd "$BACKEND" >/dev/null
     if docker compose version >/dev/null 2>&1; then
-      docker compose up -d postgres redis emqx tdengine minio rabbitmq zookeeper kafka
+      docker compose up -d postgres redis emqx influxdb minio rabbitmq zookeeper kafka
     else
-      docker-compose up -d postgres redis emqx tdengine minio rabbitmq zookeeper kafka
+      docker-compose up -d postgres redis emqx influxdb minio rabbitmq zookeeper kafka
     fi
     popd >/dev/null
-    wait_port 127.0.0.1 5432 60
-    wait_port 127.0.0.1 6379 40
+    wait_port 127.0.0.1 5433 60
+    wait_port 127.0.0.1 6380 40
   else
     echo "[WARN] 未找到 docker，跳过中间件"
   fi

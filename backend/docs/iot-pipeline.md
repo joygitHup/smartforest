@@ -4,7 +4,7 @@
 
 ```
 设备 MQTT → EMQX → [Bridge/规则 或 Django mqtt_client] → Kafka
-       → consume_kafka → Celery → PostgreSQL / TDengine / MinIO / Alerts
+       → consume_kafka → Celery → PostgreSQL / InfluxDB / MinIO / Alerts
 ```
 
 ## 主题约定
@@ -63,7 +63,7 @@ python manage.py kafka_smoke --consume
 ## P1 吞吐要点
 
 - Kafka：`key=device_id` 保序；Producer linger/batch/lz4；Consumer `max_poll_records` + 手动 commit
-- Celery：遥测写 PG 后 `flush_tdengine_telemetry_batch` 异步批量写 TDengine；规则评估走 `evaluate_telemetry_rules_task`
+- Celery：遥测写 PG 后 `flush_influxdb_telemetry_batch` 异步批量写 InfluxDB；规则评估走 `evaluate_telemetry_rules_task`
 - 热点限流：MQTT `_forward` 对 telemetry 按设备间隔丢弃；规则引擎 `allow_alert_fire` 去重
 ## EMQX 规则引擎 → Kafka（可选，替代 Django mqtt_client）
 

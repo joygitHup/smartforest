@@ -100,13 +100,19 @@ def _check_postgres() -> dict[str, Any]:
         return {'ok': False, 'error': str(exc)}
 
 
-def _check_tdengine() -> dict[str, Any]:
+def _check_influxdb() -> dict[str, Any]:
     try:
-        from core.tdengine_client import get_tdengine_client
+        from core.influxdb_client import get_influxdb_client
 
-        client = get_tdengine_client()
+        client = get_influxdb_client()
         client.connect()
-        return {'ok': True}
+        health = client.health()
+        return {
+            'ok': bool(health.get('ok')),
+            'status': health.get('status'),
+            'message': health.get('message', ''),
+            'error': health.get('error'),
+        }
     except Exception as exc:
         return {'ok': False, 'error': str(exc)}
 
@@ -440,7 +446,7 @@ class OpsDiagnosticsView(APIView):
         pg = _check_postgres()
         redis = _check_redis()
         mqtt = _check_tcp(mqtt_host, mqtt_port)
-        td = _check_tdengine()
+        td = _check_influxdb()
         services = [
             {'name': 'PostgreSQL', **pg},
             {'name': 'Redis', **redis},
@@ -464,7 +470,7 @@ class OpsDiagnosticsView(APIView):
                 'error': metrics_err,
             },
             {'name': 'MinIO', 'ok': minio_ok, 'url': minio_api, 'error': minio_err},
-            {'name': 'TDengine', **td},
+            {'name': 'InfluxDB', **td},
         ]
 
         devices_qs = filter_by_org_scope(Device.objects.all(), request.user)

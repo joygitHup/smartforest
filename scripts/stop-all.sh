@@ -41,9 +41,9 @@ if [[ "$STOP_DOCKER" == "1" ]]; then
   if command -v docker >/dev/null 2>&1; then
     pushd "$BACKEND" >/dev/null
     if docker compose version >/dev/null 2>&1; then
-      docker compose stop postgres redis emqx tdengine minio rabbitmq zookeeper kafka || true
+      docker compose stop postgres redis emqx influxdb minio rabbitmq zookeeper kafka || true
     else
-      docker-compose stop postgres redis emqx tdengine minio rabbitmq zookeeper kafka || true
+      docker-compose stop postgres redis emqx influxdb minio rabbitmq zookeeper kafka || true
     fi
     popd >/dev/null
   fi

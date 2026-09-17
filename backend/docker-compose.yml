@@ -22,13 +22,15 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/1
       - MQTT_BROKER_HOST=emqx
       - MQTT_BROKER_PORT=1883
-      - TDENGINE_HOST=tdengine
-      - TDENGINE_PORT=6030
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=forest-influxdb-super-token-2026
+      - INFLUXDB_ORG=forest
+      - INFLUXDB_BUCKET=forest_monitor
     depends_on:
       - postgres
       - redis
       - emqx
-      - tdengine
+      - influxdb
     volumes:
       - ./logs:/app/logs
       - ./media:/app/media
@@ -55,13 +57,15 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/1
       - MQTT_BROKER_HOST=emqx
       - MQTT_BROKER_PORT=1883
-      - TDENGINE_HOST=tdengine
-      - TDENGINE_PORT=6030
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=forest-influxdb-super-token-2026
+      - INFLUXDB_ORG=forest
+      - INFLUXDB_BUCKET=forest_monitor
     depends_on:
       - postgres
       - redis
       - emqx
-      - tdengine
+      - influxdb
     volumes:
       - ./logs:/app/logs
     networks:
@@ -105,7 +109,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - forest_network
 
@@ -141,23 +145,29 @@ services:
     networks:
       - forest_network
 
-  # TDengine
-  tdengine:
-    image: tdengine/tdengine:3.3.0.0
-    container_name: forest_tdengine
+  # InfluxDB 2.x
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: forest_influxdb
     restart: unless-stopped
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=InfluxAdmin@2026
+      - DOCKER_INFLUXDB_INIT_ORG=forest
+      - DOCKER_INFLUXDB_INIT_BUCKET=forest_monitor
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=forest-influxdb-super-token-2026
+      - DOCKER_INFLUXDB_INIT_RETENTION=365d
     ports:
-      - "6030:6030"    # Native
-      - "6041:6041"    # REST
-      - "6043:6043"    # WebSocket
-      - "6044:6044"    # Schemaless
-      - "6046:6046"    # Prometheus
-      - "6047:6047"    # Grafana
-      - "6048:6048"    # Data Node
-      - "6049:6049"    # MQTT
+      - "8086:8086"    # HTTP API + UI
     volumes:
-      - tdengine_data:/var/lib/taos
-      - tdengine_log:/var/log/taos
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - forest_network
 
@@ -264,8 +274,8 @@ volumes:
   redis_data:
   emqx_data:
   emqx_log:
-  tdengine_data:
-  tdengine_log:
+  influxdb_data:
+  influxdb_config:
   minio_data:
   rabbitmq_data:
   prometheus_data:

@@ -16,7 +16,7 @@
 - **消息队列**: RabbitMQ + Kafka
 - **任务调度**: Celery + Redis
 - **业务数据库**: PostgreSQL 15+
-- **时序数据库**: TDengine
+- **时序数据库**: InfluxDB 2.7
 - **缓存**: Redis
 - **文件存储**: 阿里云OSS / MinIO
 - **容器编排**: Docker + Kubernetes
@@ -73,7 +73,7 @@
 │   │   ├── consumers.py       # WebSocket 消费者
 │   │   ├── routing.py         # WebSocket 路由
 │   │   ├── mqtt_client.py     # MQTT 客户端
-│   │   └── tdengine_client.py # TDengine 客户端
+│   │   └── influxdb_client.py # InfluxDB 客户端
 │   ├── scripts/               # 脚本
 │   ├── docker/                # Docker 配置
 │   ├── docker-compose.yml     # Docker Compose
@@ -121,7 +121,7 @@
 ### 数据库规范
 
 1. **PostgreSQL**：存储业务数据（设备、告警、用户等）
-2. **TDengine**：存储时序数据（遥测数据）
+2. **InfluxDB**：存储时序数据（遥测数据）
 3. **Redis**：缓存、会话、Celery 队列
 4. **索引**：为常用查询字段创建索引
 5. **迁移**：使用 `python manage.py makemigrations` 和 `migrate`

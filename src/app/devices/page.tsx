@@ -314,14 +314,14 @@ function DevicesPageContent() {
           <button
             type="button"
             onClick={() => setShowAddDialog(true)}
-            className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
+            className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
           >
             + 添加设备
           </button>
           <button
             type="button"
             onClick={toggleBatchMode}
-            className={`px-3 py-1.5 text-xs rounded border transition-colors ${
+            className={`px-3 py-1.5 text-sm rounded border transition-colors ${
               batchMode
                 ? 'border-[#3b82f6] bg-[#3b82f6]/15 text-[#3b82f6]'
                 : 'border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6]'
@@ -336,14 +336,14 @@ function DevicesPageContent() {
 
       {batchMode && (
         <div className="flex flex-wrap items-center gap-2 bg-[#152238] border border-[#1e3a5f] rounded-lg px-3 py-2">
-          <span className="text-xs text-[#8b9bb4]">
+          <span className="text-sm text-[#8b9bb4]">
             已选 <span className="text-[#e8f1ff] font-mono">{selectedIds.length}</span> 台
           </span>
           <select
             value={batchStatus}
             onChange={(e) => setBatchStatus(e.target.value)}
             disabled={batchBusy}
-            className="bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6] disabled:opacity-50"
+            className="bg-[#0f1e35] border border-[#1e3a5f] rounded px-2 py-1 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6] disabled:opacity-50"
           >
             <option value="online">设为在线</option>
             <option value="offline">设为离线</option>
@@ -354,7 +354,7 @@ function DevicesPageContent() {
             type="button"
             disabled={batchBusy || selectedIds.length === 0}
             onClick={handleBatchStatus}
-            className="px-2.5 py-1 text-xs rounded border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-40"
+            className="px-2.5 py-1 text-sm rounded border border-[#1e3a5f] text-[#8b9bb4] hover:border-[#3b82f6] hover:text-[#3b82f6] disabled:opacity-40"
           >
             应用状态
           </button>
@@ -362,7 +362,7 @@ function DevicesPageContent() {
             type="button"
             disabled={batchBusy || selectedIds.length === 0}
             onClick={handleBatchRestart}
-            className="px-2.5 py-1 text-xs rounded border border-[#1e3a5f] text-[#f59e0b] hover:border-[#f59e0b] disabled:opacity-40"
+            className="px-2.5 py-1 text-sm rounded border border-[#1e3a5f] text-[#f59e0b] hover:border-[#f59e0b] disabled:opacity-40"
           >
             批量重启
           </button>
@@ -370,7 +370,7 @@ function DevicesPageContent() {
             type="button"
             disabled={batchBusy || selectedIds.length === 0}
             onClick={handleBatchDelete}
-            className="px-2.5 py-1 text-xs rounded border border-[#ef4444]/40 text-[#ef4444] hover:border-[#ef4444] disabled:opacity-40"
+            className="px-2.5 py-1 text-sm rounded border border-[#ef4444]/40 text-[#ef4444] hover:border-[#ef4444] disabled:opacity-40"
           >
             批量删除
           </button>
@@ -407,12 +407,12 @@ function DevicesPageContent() {
           placeholder="搜索设备名称或ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] placeholder-[#8b9bb4] focus:outline-none focus:border-[#3b82f6] w-64"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] placeholder-[#8b9bb4] focus:outline-none focus:border-[#3b82f6] w-64"
         />
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
         >
           <option value="">全部类型</option>
           <option value="dual_camera">双目智能监测云台</option>
@@ -423,7 +423,7 @@ function DevicesPageContent() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-xs text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
+          className="bg-[#152238] border border-[#1e3a5f] rounded px-3 py-1.5 text-sm text-[#e8f1ff] focus:outline-none focus:border-[#3b82f6]"
         >
           <option value="">全部状态</option>
           <option value="online">在线</option>
@@ -431,7 +431,7 @@ function DevicesPageContent() {
           <option value="alarm">告警</option>
           <option value="maintenance">维护中</option>
         </select>
-        <span className="text-xs text-[#8b9bb4] ml-auto">
+        <span className="text-sm text-[#8b9bb4] ml-auto">
           共 <span className="text-[#e8f1ff] font-mono">{totalCount}</span> 台设备
         </span>
       </div>
@@ -442,7 +442,7 @@ function DevicesPageContent() {
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
                 <div className="w-12 h-12 border-4 border-[#3b82f6] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                <p className="text-xs text-[#8b9bb4]">加载中...</p>
+                <p className="text-sm text-[#8b9bb4]">加载中...</p>
               </div>
             </div>
           ) : error ? (
@@ -451,7 +451,7 @@ function DevicesPageContent() {
                 <p className="text-sm text-[#ef4444] mb-2">{error}</p>
                 <button
                   onClick={() => void fetchDevices()}
-                  className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
+                  className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
                 >
                   重试
                 </button>
@@ -466,7 +466,7 @@ function DevicesPageContent() {
                 <p className="text-sm text-[#8b9bb4]">暂无设备数据</p>
                 <button
                   onClick={() => setShowAddDialog(true)}
-                  className="mt-3 px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
+                  className="mt-3 px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
                 >
                   添加第一台设备
                 </button>
@@ -490,15 +490,15 @@ function DevicesPageContent() {
                       />
                     </th>
                   )}
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">设备ID</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">设备名称</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">类型</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">状态</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">信号</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">电量</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">所属林区</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">最后在线</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">操作</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">设备ID</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">设备名称</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">类型</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">状态</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">信号</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">电量</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">所属林区</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">最后在线</th>
+                  <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -520,11 +520,11 @@ function DevicesPageContent() {
                         />
                       </td>
                     )}
-                    <td className="px-4 py-3 text-xs text-[#e8f1ff] font-mono">{device.device_id}</td>
-                    <td className="px-4 py-3 text-xs text-[#e8f1ff]">{device.device_name}</td>
-                    <td className="px-4 py-3 text-xs text-[#8b9bb4]">{device.device_type_display || typeLabels[device.device_type]}</td>
+                    <td className="px-4 py-3 text-sm text-[#e8f1ff] font-mono">{device.device_id}</td>
+                    <td className="px-4 py-3 text-sm text-[#e8f1ff]">{device.device_name}</td>
+                    <td className="px-4 py-3 text-sm text-[#8b9bb4]">{device.device_type_display || typeLabels[device.device_type]}</td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs ${statusLabels[device.status]?.color || 'text-[#8b9bb4]'}`}>
+                      <span className={`text-sm ${statusLabels[device.status]?.color || 'text-[#8b9bb4]'}`}>
                         {device.status === 'alarm' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#ef4444] mr-1 animate-pulse" />}
                         {device.status_display || statusLabels[device.status]?.text || device.status}
                       </span>
@@ -550,34 +550,34 @@ function DevicesPageContent() {
                               style={{ width: `${device.battery_level}%` }}
                             />
                           </div>
-                          <span className="text-xs text-[#8b9bb4] font-mono">{device.battery_level}%</span>
+                          <span className="text-sm text-[#8b9bb4] font-mono">{device.battery_level}%</span>
                         </div>
                       ) : (
-                        <span className="text-xs text-[#8b9bb4]">-</span>
+                        <span className="text-sm text-[#8b9bb4]">-</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-xs text-[#8b9bb4]">
+                    <td className="px-4 py-3 text-sm text-[#8b9bb4]">
                       {device.forest_zone_ref_name || device.forest_zone || device.region || '-'}
                     </td>
-                    <td className="px-4 py-3 text-xs text-[#8b9bb4] font-mono">{formatTime(device.last_online_time)}</td>
+                    <td className="px-4 py-3 text-sm text-[#8b9bb4] font-mono">{formatTime(device.last_online_time)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => void openDetail(device)}
-                          className="text-xs text-[#3b82f6] hover:text-[#60a5fa] transition-colors"
+                          className="text-sm text-[#3b82f6] hover:text-[#60a5fa] transition-colors"
                         >
                           详情
                         </button>
                         <button
                           onClick={() => void openEdit(device)}
-                          className="text-xs text-[#10b981] hover:text-[#34d399] transition-colors"
+                          className="text-sm text-[#10b981] hover:text-[#34d399] transition-colors"
                         >
                           编辑
                         </button>
                         <button
                           type="button"
                           onClick={() => askDelete(device)}
-                          className="text-xs text-[#ef4444] hover:text-[#f87171] transition-colors"
+                          className="text-sm text-[#ef4444] hover:text-[#f87171] transition-colors"
                         >
                           删除
                         </button>
@@ -611,7 +611,7 @@ function DevicesPageContent() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#1e3a5f]">
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-[#e8f1ff]">设备详情</span>
-                <span className="text-xs text-[#8b9bb4] font-mono">[{selectedDevice.device_id}]</span>
+                <span className="text-sm text-[#8b9bb4] font-mono">[{selectedDevice.device_id}]</span>
               </div>
               <button onClick={closeDetail} className="text-[#8b9bb4] hover:text-[#e8f1ff]">
                 ✕
@@ -627,7 +627,7 @@ function DevicesPageContent() {
                   <p className="text-sm text-[#ef4444] mb-3">{detailError}</p>
                   <button
                     onClick={() => void openDetail(selectedDevice)}
-                    className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
+                    className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
                   >
                     重试
                   </button>
@@ -637,7 +637,7 @@ function DevicesPageContent() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                       <div className="text-[10px] text-[#8b9bb4] mb-2">基本信息</div>
-                      <div className="space-y-2 text-xs">
+                      <div className="space-y-2 text-sm">
                         <div className="flex justify-between gap-4">
                           <span className="text-[#8b9bb4] shrink-0">设备名称</span>
                           <span className="text-[#e8f1ff] text-right">{displayValue(selectedDevice.device_name)}</span>
@@ -672,7 +672,7 @@ function DevicesPageContent() {
                     </div>
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                       <div className="text-[10px] text-[#8b9bb4] mb-2">运行状态</div>
-                      <div className="space-y-2 text-xs">
+                      <div className="space-y-2 text-sm">
                         <div className="flex justify-between gap-4">
                           <span className="text-[#8b9bb4] shrink-0">在线状态</span>
                           <span className={statusLabels[selectedDevice.status]?.color || 'text-[#e8f1ff]'}>
@@ -721,7 +721,7 @@ function DevicesPageContent() {
                   {selectedDevice.device_type === 'dual_camera' && (
                     <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                       <div className="text-[10px] text-[#8b9bb4] mb-2">云台参数</div>
-                      <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div className="grid grid-cols-2 gap-4 text-sm">
                         <div className="flex justify-between gap-4">
                           <span className="text-[#8b9bb4]">水平角</span>
                           <span className="text-[#e8f1ff] font-mono">
@@ -740,7 +740,7 @@ function DevicesPageContent() {
 
                   <div className="bg-[#0f1e35] border border-[#1e3a5f] rounded p-3">
                     <div className="text-[10px] text-[#8b9bb4] mb-2">设备属性</div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                       <div className="flex justify-between gap-2 sm:flex-col sm:gap-1">
                         <span className="text-[#8b9bb4]">固件版本</span>
                         <span className="text-[#e8f1ff]">{displayValue(selectedDevice.firmware_version)}</span>
@@ -780,15 +780,15 @@ function DevicesPageContent() {
                       </Link>
                     </div>
                     {rulesLoading ? (
-                      <div className="text-xs text-[#8b9bb4] py-2">加载规则中…</div>
+                      <div className="text-sm text-[#8b9bb4] py-2">加载规则中…</div>
                     ) : effectiveRules.length === 0 ? (
-                      <div className="text-xs text-[#8b9bb4] py-2">暂无对该设备生效的告警规则</div>
+                      <div className="text-sm text-[#8b9bb4] py-2">暂无对该设备生效的告警规则</div>
                     ) : (
                       <div className="space-y-2 max-h-40 overflow-auto">
                         {effectiveRules.map((rule) => (
                           <div
                             key={rule.id}
-                            className="flex items-center justify-between gap-3 text-xs border border-[#1e3a5f]/60 rounded px-2 py-1.5"
+                            className="flex items-center justify-between gap-3 text-sm border border-[#1e3a5f]/60 rounded px-2 py-1.5"
                           >
                             <div className="min-w-0">
                               <div className="text-[#e8f1ff] truncate">{rule.name}</div>
@@ -836,7 +836,7 @@ function DevicesPageContent() {
                   <div className="flex items-center gap-3 pt-2">
                     <button
                       onClick={() => void openEdit(selectedDevice)}
-                      className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
+                      className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
                     >
                       编辑设备
                     </button>

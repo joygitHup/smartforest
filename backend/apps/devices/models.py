@@ -103,7 +103,7 @@ class Device(models.Model):
 
 
 class DeviceTelemetry(models.Model):
-    """设备遥测数据（PostgreSQL 存储最近数据，历史数据在 TDengine）"""
+    """设备遥测数据（PostgreSQL 存储最近数据，历史数据在 InfluxDB）"""
     device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='telemetry')
     timestamp = models.DateTimeField('采集时间', db_index=True)
     

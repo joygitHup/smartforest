@@ -29,8 +29,8 @@ if "%STOP_DOCKER%"=="1" (
   where docker >nul 2>&1
   if not errorlevel 1 (
     pushd "%BACKEND%"
-    docker compose stop postgres redis emqx tdengine minio rabbitmq zookeeper kafka 2>nul
-    if errorlevel 1 docker-compose stop postgres redis emqx tdengine minio rabbitmq zookeeper kafka 2>nul
+    docker compose stop postgres redis emqx influxdb minio rabbitmq zookeeper kafka 2>nul
+    if errorlevel 1 docker-compose stop postgres redis emqx influxdb minio rabbitmq zookeeper kafka 2>nul
     popd
   )
 ) else (

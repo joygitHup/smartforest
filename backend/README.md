@@ -12,7 +12,7 @@
 | 消息队列 | RabbitMQ + Kafka | 指令可靠投递 + 高吞吐遥测 |
 | 任务调度 | Celery + Redis | 异步AI推理、告警推送 |
 | 业务数据库 | PostgreSQL 15+ | 设备元数据、工单、权限 |
-| 时序数据库 | TDengine | 海量传感器遥测存储 |
+| 时序数据库 | InfluxDB 2.7 | 海量传感器遥测存储 |
 | 缓存 | Redis | 设备状态、会话、队列 |
 | 文件存储 | 阿里云OSS / MinIO | 视频流、告警截图 |
 | 容器编排 | Docker + Kubernetes | 标准化部署与弹性伸缩 |
@@ -36,7 +36,7 @@ pip install -r requirements.txt
 要点：
 
 - WebSocket 使用 PyPI 包 **`channels`** + **`daphne`**（不要装错成不存在的 `django-channels`）
-- TDengine 使用 **`taospy`**；未安装时遥测写入会跳过
+- InfluxDB 使用 **`influxdb-client`**；未安装时遥测写入会跳过
 - Redis 需 **≥ 5**（Channels / Celery）
 - Windows Celery 请加 `--pool=solo`
 
@@ -79,7 +79,7 @@ backend/
 │   ├── consumers.py       # WebSocket 消费者
 │   ├── routing.py         # WebSocket 路由
 │   ├── mqtt_client.py     # MQTT 客户端
-│   ├── tdengine_client.py # TDengine 客户端
+│   ├── influxdb_client.py # InfluxDB 客户端
 │   └── management/        # 管理命令
 │       └── commands/
 │           └── mqtt_client.py
@@ -176,7 +176,7 @@ python manage.py mqtt_client
 - 设备状态监控（在线/离线/告警）
 - 云台控制（PTZ）
 - 固件升级（OTA）
-- 遥测数据采集（TDengine）
+- 遥测数据采集（InfluxDB）
 
 ### 告警管理
 - 三级告警分级（提示/预警/紧急）
@@ -211,8 +211,9 @@ python manage.py mqtt_client
 - `reports_daily_report` - 日报
 - `users_user` - 用户
 
-### TDengine（时序数据）
-- `device_telemetry` - 设备遥测超级表
+### InfluxDB（时序数据）
+- Bucket：`forest_monitor`（retention 365d）
+- Measurement：`device_telemetry`（tags: device_id / device_type / region）
   - 温度、湿度、风速、风向、光照强度
   - 土壤湿度（10cm/30cm/60cm）
   - 可燃物含水率
@@ -289,7 +290,7 @@ pytest --cov=apps --cov-report=html
 ## 性能优化
 
 - Redis 缓存热点数据
-- TDengine 时序数据高效存储
+- InfluxDB 时序数据高效存储
 - Kafka 高吞吐遥测
 - Celery 异步任务
 - 数据库索引优化

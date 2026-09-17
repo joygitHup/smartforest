@@ -96,7 +96,7 @@ function DiagnosticsPageContent() {
         <div className="flex items-center gap-3">
           <Link
             href="/ops/metrics"
-            className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors"
+            className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors"
           >
             Metrics 监控 →
           </Link>
@@ -104,14 +104,14 @@ function DiagnosticsPageContent() {
             type="button"
             disabled={!data || events.length === 0}
             onClick={exportEvents}
-            className="px-3 py-1.5 text-xs border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors disabled:opacity-40"
+            className="px-3 py-1.5 text-sm border border-[#1e3a5f] text-[#8b9bb4] rounded hover:border-[#3b82f6] hover:text-[#3b82f6] transition-colors disabled:opacity-40"
           >
             导出事件
           </button>
           <button
             type="button"
             onClick={() => void load()}
-            className="px-3 py-1.5 text-xs bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
+            className="px-3 py-1.5 text-sm bg-[#3b82f6] text-white rounded hover:bg-[#2563eb] transition-colors"
           >
             刷新
           </button>
@@ -119,20 +119,20 @@ function DiagnosticsPageContent() {
       </div>
 
       {error && (
-        <div className="text-xs text-[#ef4444] bg-[#ef4444]/10 border border-[#ef4444]/30 rounded px-3 py-2">
+        <div className="text-sm text-[#ef4444] bg-[#ef4444]/10 border border-[#ef4444]/30 rounded px-3 py-2">
           {error}
         </div>
       )}
 
       {loading && !data && (
-        <div className="text-xs text-[#8b9bb4] py-10 text-center">加载诊断数据…</div>
+        <div className="text-sm text-[#8b9bb4] py-10 text-center">加载诊断数据…</div>
       )}
 
       {data && (
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-              <div className="text-xs text-[#8b9bb4] mb-1">系统健康度</div>
+              <div className="text-sm text-[#8b9bb4] mb-1">系统健康度</div>
               <div className={`text-2xl font-bold font-mono ${scoreColor(data.health_score)}`}>
                 {data.health_score}
                 <span className="text-sm">%</span>
@@ -140,7 +140,7 @@ function DiagnosticsPageContent() {
               <div className="text-[10px] text-[#8b9bb4] mt-1">{data.health_label}</div>
             </div>
             <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-              <div className="text-xs text-[#8b9bb4] mb-1">CPU 使用率</div>
+              <div className="text-sm text-[#8b9bb4] mb-1">CPU 使用率</div>
               <div className="text-2xl font-bold font-mono text-[#3b82f6]">
                 {host?.cpu_percent != null ? `${host.cpu_percent}%` : '-'}
               </div>
@@ -149,7 +149,7 @@ function DiagnosticsPageContent() {
               </div>
             </div>
             <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-              <div className="text-xs text-[#8b9bb4] mb-1">内存使用</div>
+              <div className="text-sm text-[#8b9bb4] mb-1">内存使用</div>
               <div className="text-2xl font-bold font-mono text-[#06b6d4]">
                 {host?.memory_percent != null ? `${host.memory_percent}%` : '-'}
               </div>
@@ -160,7 +160,7 @@ function DiagnosticsPageContent() {
               </div>
             </div>
             <div className="bg-[#152238] border border-[#1e3a5f] rounded-lg p-4">
-              <div className="text-xs text-[#8b9bb4] mb-1">磁盘使用</div>
+              <div className="text-sm text-[#8b9bb4] mb-1">磁盘使用</div>
               <div className="text-2xl font-bold font-mono text-[#f59e0b]">
                 {disk?.percent != null ? `${disk.percent}%` : '-'}
               </div>
@@ -249,13 +249,13 @@ function DiagnosticsPageContent() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-[#8b9bb4]">事件级别:</span>
+            <span className="text-sm text-[#8b9bb4]">事件级别:</span>
             {(['all', 'error', 'warn', 'info'] as const).map((level) => (
               <button
                 key={level}
                 type="button"
                 onClick={() => setFilter(level)}
-                className={`px-3 py-1 text-xs rounded transition-colors ${
+                className={`px-3 py-1 text-sm rounded transition-colors ${
                   filter === level
                     ? level === 'error'
                       ? 'bg-[#ef4444]/20 text-[#ef4444]'
@@ -284,22 +284,22 @@ function DiagnosticsPageContent() {
               <table className="w-full">
                 <thead className="bg-[#0f1e35] sticky top-0">
                   <tr>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4] w-44">
+                    <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4] w-44">
                       时间
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4] w-20">
+                    <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4] w-20">
                       级别
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4] w-28">
+                    <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4] w-28">
                       来源
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-[#8b9bb4]">消息</th>
+                    <th className="text-left px-4 py-3 text-sm font-medium text-[#8b9bb4]">消息</th>
                   </tr>
                 </thead>
                 <tbody>
                   {events.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-4 py-8 text-center text-xs text-[#8b9bb4]">
+                      <td colSpan={4} className="px-4 py-8 text-center text-sm text-[#8b9bb4]">
                         暂无诊断事件
                       </td>
                     </tr>
@@ -309,7 +309,7 @@ function DiagnosticsPageContent() {
                         key={log.id}
                         className="border-t border-[#1e3a5f]/50 hover:bg-[#1a2d4a] transition-colors"
                       >
-                        <td className="px-4 py-2 text-xs text-[#8b9bb4] font-mono whitespace-nowrap">
+                        <td className="px-4 py-2 text-sm text-[#8b9bb4] font-mono whitespace-nowrap">
                           {formatTime(log.timestamp)}
                         </td>
                         <td className="px-4 py-2">
@@ -329,8 +329,8 @@ function DiagnosticsPageContent() {
                                 : 'INFO'}
                           </span>
                         </td>
-                        <td className="px-4 py-2 text-xs text-[#e8f1ff] font-mono">{log.source}</td>
-                        <td className="px-4 py-2 text-xs text-[#8b9bb4]">{log.message}</td>
+                        <td className="px-4 py-2 text-sm text-[#e8f1ff] font-mono">{log.source}</td>
+                        <td className="px-4 py-2 text-sm text-[#8b9bb4]">{log.message}</td>
                       </tr>
                     ))
                   )}
