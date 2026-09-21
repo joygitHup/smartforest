@@ -297,6 +297,51 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': False,
 }
 
+# SSO 配置（基于 integration_hub SDK，支持多中台）
+# 单中台默认配置（SSO_PARTNERS 为空时用这套）
+SSO_PLATFORM_URL = os.environ.get('SSO_PLATFORM_URL', 'http://127.0.0.1:8000')
+SSO_AUDIENCE = os.environ.get('SSO_AUDIENCE', 'app_mu6b9ioz')
+SSO_APP_ID = os.environ.get('SSO_APP_ID', '')
+SSO_DEFAULT_ROLE = 'viewer'
+
+# 多中台配置：key=iss（中台标识），value=中台配置
+# audience 支持 str 或 list（同中台多 code 场景）
+# 部署时按实际中台填写，留空则走上面的单中台默认配置
+SSO_PARTNERS: dict = {
+    # 示例（取消注释后按实际填）：
+    # 'integration-platform': {
+    #     'platform_url': 'http://127.0.0.1:8000',
+    #     'audience': ['app_mu6b9ioz', 'app_fire_cmd'],  # 同中台多 code
+    #     'app_id': 'app_1a0b23df2626GrEjJAf',
+    # },
+    # 'provincial-emergency': {
+    #     'platform_url': 'http://provincial-hub:8000',
+    #     'audience': 'app_prov_smartforest',
+    #     'app_id': 'app_prov_001',
+    # },
+}
+
+# 初始化 integration_hub SDK（单中台默认配置，多中台时由 sso.py 按 iss 路由）
+try:
+    from integration_hub.sso import configure as _sso_configure
+    _sso_configure(
+        platform_url=SSO_PLATFORM_URL,
+        audience=SSO_AUDIENCE,
+        app_id=SSO_APP_ID,
+        auto_create_user=False,
+        default_redirect='/dashboard',
+    )
+    import logging as _logging
+    _logging.getLogger(__name__).info(
+        'integration_hub SDK configured: platform=%s audience=%s',
+        SSO_PLATFORM_URL, SSO_AUDIENCE,
+    )
+except ImportError:
+    import logging as _logging
+    _logging.getLogger(__name__).warning(
+        'integration_hub SDK not installed; SSO exchange will fail at runtime'
+    )
+
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',

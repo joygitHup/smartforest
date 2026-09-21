@@ -7,9 +7,11 @@ import { ForceChangePasswordModal } from '@/components/force-change-password-mod
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === '/login';
+  // 登录页和 SSO 回调页不走应用壳（无 Sidebar/Header/改密弹窗）
+  const isShellLessRoute =
+    pathname === '/login' || pathname.startsWith('/sso/');
 
-  if (isLoginPage) {
+  if (isShellLessRoute) {
     return <>{children}</>;
   }
 

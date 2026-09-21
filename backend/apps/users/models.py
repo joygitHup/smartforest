@@ -253,6 +253,41 @@ class User(AbstractUser):
                 self.role = code
 
 
+class ExternalIdentity(models.Model):
+    """第三方 SSO 身份映射（issuer + sub → 本地 User）。
+    首次 SSO 登录时自动创建，用于 token exchange 场景下的免密登录。"""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='external_identities',
+        verbose_name='关联用户',
+    )
+    issuer = models.CharField(
+        '签发方', max_length=64, db_index=True,
+        help_text='第三方 JWT 的 iss 声明值，如 provincial_emergency',
+    )
+    sub = models.CharField(
+        '外部主体标识', max_length=128, db_index=True,
+        help_text='第三方 JWT 的 sub 声明值',
+    )
+    claims = models.JSONField('最近一次 claims 快照', default=dict, blank=True)
+    last_login = models.DateTimeField('最近 SSO 登录时间', null=True, blank=True)
+    created_at = models.DateTimeField('创建时间', auto_now_add=True)
+
+    class Meta:
+        app_label = 'users'
+        db_table = 'external_identities'
+        verbose_name = '第三方身份'
+        verbose_name_plural = verbose_name
+        unique_together = ('issuer', 'sub')
+        indexes = [
+            models.Index(fields=['issuer', 'sub']),
+        ]
+
+    def __str__(self):
+        return f'{self.issuer}:{self.sub} → user:{self.user_id}'
+
+
 class Notification(models.Model):
     """通知消息"""
     NOTIFICATION_TYPES = [

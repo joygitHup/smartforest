@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
+from apps.users.sso import SSOExchangeView
 from core.dashboard_views import DashboardOverviewView, DashboardRegionsView
 from core.pipeline_views import PipelineHealthView, PipelineKafkaPublishView
 from core.ops_views import OpsOverviewView, OpsMetricsQueryView, OpsDiagnosticsView
@@ -25,6 +26,9 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
+    # SSO Token Exchange（第三方 RS256 JWT → 本系统 SimpleJWT）
+    path('api/sso/exchange/', SSOExchangeView.as_view(), name='sso-exchange'),
+    
     # 指挥中心
     path('api/dashboard/overview/', DashboardOverviewView.as_view(), name='dashboard-overview'),
     path('api/dashboard/regions/', DashboardRegionsView.as_view(), name='dashboard-regions'),
